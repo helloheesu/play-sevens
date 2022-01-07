@@ -38,7 +38,6 @@ interface ICardInfo {
   id: number;
   row: number;
   col: number;
-  toBeMerged: boolean;
 }
 
 function App() {
@@ -61,7 +60,6 @@ function App() {
       id: generateNewCardId(),
       row,
       col,
-      toBeMerged: false,
     };
   };
 
@@ -79,7 +77,6 @@ function App() {
             id,
             row,
             col: Math.max(0, col - 1),
-            toBeMerged: col - 1 < 0,
           }))
         );
         setCards((cards) => [
@@ -94,7 +91,6 @@ function App() {
             id,
             row,
             col: Math.min(COL_SIZE - 1, col + 1),
-            toBeMerged: col + 1 > COL_SIZE - 1,
           }))
         );
         setCards((cards) => [
@@ -109,7 +105,6 @@ function App() {
             id,
             row: Math.max(0, row - 1),
             col,
-            toBeMerged: row - 1 < 0,
           }))
         );
         setCards((cards) => [
@@ -124,7 +119,6 @@ function App() {
             id,
             row: Math.min(ROW_SIZE - 1, row + 1),
             col,
-            toBeMerged: row + 1 > ROW_SIZE - 1,
           }))
         );
         setCards((cards) => [
