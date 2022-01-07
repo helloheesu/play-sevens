@@ -14,7 +14,7 @@ const Container = styled.div`
 `;
 
 interface Props {
-  children: React.ReactElement[];
+  children: React.ReactNode;
 }
 const Grid = ({ children }: Props) => {
   const { row, col } = useRecoilValue(gridSizeState);
