@@ -52,28 +52,46 @@ function App() {
     switch (e.code) {
       case 'ArrowLeft':
         setCards((cards) =>
-          cards.map(({ id, row, col }) => ({ id, row, col: col - 1 }))
+          cards.map(({ id, row, col }) => ({
+            id,
+            row,
+            col: Math.max(0, col - 1),
+          }))
         );
         break;
       case 'ArrowRight':
         setCards((cards) =>
-          cards.map(({ id, row, col }) => ({ id, row, col: col + 1 }))
+          cards.map(({ id, row, col }) => ({
+            id,
+            row,
+            col: Math.min(COL_SIZE - 1, col + 1),
+          }))
         );
         break;
       case 'ArrowUp':
         setCards((cards) =>
-          cards.map(({ id, row, col }) => ({ id, row: row - 1, col }))
+          cards.map(({ id, row, col }) => ({
+            id,
+            row: Math.max(0, row - 1),
+            col,
+          }))
         );
         break;
       case 'ArrowDown':
         setCards((cards) =>
-          cards.map(({ id, row, col }) => ({ id, row: row + 1, col }))
+          cards.map(({ id, row, col }) => ({
+            id,
+            row: Math.min(ROW_SIZE - 1, row + 1),
+            col,
+          }))
         );
         break;
       default:
         break;
     }
   };
+  console.log(cards);
+
   return (
     <Wrapper onKeyUp={handleKeyUp} tabIndex={0}>
       <Container>
