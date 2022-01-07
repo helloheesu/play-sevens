@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
 
@@ -48,7 +48,7 @@ interface ICardInfo {
 }
 
 function App() {
-  const [cardIndex, setCardIndex] = useState(0);
+  const cardIndex = useRef(0);
   const [cards, setCards] = useState<ICardInfo[]>([]);
 
   const getRandomRow = () => {
@@ -66,8 +66,8 @@ function App() {
       return null;
     }
 
-    const newCardIndex = cardIndex;
-    setCardIndex((cardIndex) => cardIndex + 1);
+    const newCardIndex = cardIndex.current;
+    cardIndex.current = cardIndex.current + 1;
 
     return {
       id: newCardIndex,
