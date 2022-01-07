@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
 
@@ -44,11 +44,46 @@ interface ICardInfo {
   id: number;
   row: number;
   col: number;
+  toBeMerged: boolean;
 }
 
 function App() {
-  const [cards, setCards] = useState<ICardInfo[]>([{ id: 0, row: 2, col: 1 }]);
+  const [cardIndex, setCardIndex] = useState(0);
+  const [cards, setCards] = useState<ICardInfo[]>([]);
+
+  const getRandomRow = () => {
+    return Math.floor(Math.random() * ROW_SIZE);
+  };
+  const getRandomCol = () => {
+    return Math.floor(Math.random() * COL_SIZE);
+  };
+  const getNewCard = (
+    cards: ICardInfo[],
+    row: number,
+    col: number
+  ): ICardInfo | null => {
+    if (cards.some((card) => card.row === row && card.col === col)) {
+      return null;
+    }
+
+    const newCardIndex = cardIndex;
+    setCardIndex((cardIndex) => cardIndex + 1);
+
+    return {
+      id: newCardIndex,
+      row,
+      col,
+      toBeMerged: false,
+    };
+  };
+
+  useEffect(() => {
+    setCards([getNewCard([], 2, 1)!]);
+  }, []);
+
   const handleKeyUp = (e: React.KeyboardEvent) => {
+    console.log(e.code);
+
     switch (e.code) {
       case 'ArrowLeft':
         setCards((cards) =>
@@ -56,36 +91,54 @@ function App() {
             id,
             row,
             col: Math.max(0, col - 1),
+            toBeMerged: col - 1 < 0,
           }))
         );
+        setCards((cards) => [
+          ...cards,
+          getNewCard(cards, getRandomRow(), COL_SIZE - 1)!,
+        ]);
         break;
+
       case 'ArrowRight':
         setCards((cards) =>
           cards.map(({ id, row, col }) => ({
             id,
             row,
             col: Math.min(COL_SIZE - 1, col + 1),
+            toBeMerged: col + 1 > COL_SIZE - 1,
           }))
         );
+        setCards((cards) => [...cards, getNewCard(cards, getRandomRow(), 0)!]);
         break;
+
       case 'ArrowUp':
         setCards((cards) =>
           cards.map(({ id, row, col }) => ({
             id,
             row: Math.max(0, row - 1),
             col,
+            toBeMerged: row - 1 < 0,
           }))
         );
+        setCards((cards) => [
+          ...cards,
+          getNewCard(cards, ROW_SIZE - 1, getRandomCol())!,
+        ]);
         break;
+
       case 'ArrowDown':
         setCards((cards) =>
           cards.map(({ id, row, col }) => ({
             id,
             row: Math.min(ROW_SIZE - 1, row + 1),
             col,
+            toBeMerged: row + 1 > ROW_SIZE - 1,
           }))
         );
+        setCards((cards) => [...cards, getNewCard(cards, 0, getRandomCol())!]);
         break;
+
       default:
         break;
     }
