@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import Card from './Card';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -20,10 +21,14 @@ const Container = styled.div`
   width: 80%;
   position: relative;
 `;
+
+const ROW_SIZE = 4;
+const COL_SIZE = 3;
+
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-rows: repeat(${ROW_SIZE}, 1fr);
+  grid-template-columns: repeat(${COL_SIZE}, 1fr);
   width: 100%;
   height: 100%;
   padding: 1em;
@@ -34,37 +39,36 @@ const Grid = styled.div`
 const Cell = styled.div`
   background-color: darkgray;
 `;
-const Card = styled.div`
-  background-color: pink;
-  width: 100%;
-  height: 100%;
-  grid-column: 2/3;
-  grid-row: 3/4;
-`;
-const enum Direction {
-  Up = 'UP',
-  Down = 'DOWN',
-  Left = 'LEFT',
-  Right = 'RIGHT',
-}
+
+type CardInfo = {
+  id: number;
+  row: number;
+  col: number;
+};
 
 function App() {
-  const move = (direction: Direction) => {
-    console.log(direction);
-  };
+  const [cards, setCards] = useState<CardInfo[]>([{ id: 0, row: 2, col: 1 }]);
   const handleKeyUp = (e: React.KeyboardEvent) => {
     switch (e.code) {
       case 'ArrowLeft':
-        move(Direction.Left);
+        setCards((cards) =>
+          cards.map(({ id, row, col }) => ({ id, row, col: col - 1 }))
+        );
         break;
       case 'ArrowRight':
-        move(Direction.Right);
+        setCards((cards) =>
+          cards.map(({ id, row, col }) => ({ id, row, col: col + 1 }))
+        );
         break;
       case 'ArrowUp':
-        move(Direction.Up);
+        setCards((cards) =>
+          cards.map(({ id, row, col }) => ({ id, row: row - 1, col }))
+        );
         break;
       case 'ArrowDown':
-        move(Direction.Down);
+        setCards((cards) =>
+          cards.map(({ id, row, col }) => ({ id, row: row + 1, col }))
+        );
         break;
       default:
         break;
@@ -88,7 +92,9 @@ function App() {
           <Cell />
         </Grid>
         <Grid>
-          <Card />
+          {cards.map(({ id, row, col }) => (
+            <Card key={id} row={row} col={col} />
+          ))}
         </Grid>
       </Container>
     </Wrapper>
