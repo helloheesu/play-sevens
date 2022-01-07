@@ -90,24 +90,14 @@ function App() {
         break;
     }
   };
-  console.log(cards);
 
   return (
     <Wrapper onKeyUp={handleKeyUp} tabIndex={0}>
       <Container>
         <Grid>
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
-          <Cell />
+          {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
+            <Cell key={i} />
+          ))}
         </Grid>
         <Grid>
           {cards.map(({ id, row, col }) => (
