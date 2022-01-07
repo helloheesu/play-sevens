@@ -6,10 +6,10 @@ const Container = styled.div`
   height: 100%;
 `;
 
-type Props = {
+interface Props {
   row: number;
   col: number;
-};
+}
 const Card = ({ row, col }: Props) => {
   return (
     <Container

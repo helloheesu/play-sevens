@@ -40,14 +40,14 @@ const Cell = styled.div`
   background-color: darkgray;
 `;
 
-type CardInfo = {
+interface ICardInfo {
   id: number;
   row: number;
   col: number;
-};
+}
 
 function App() {
-  const [cards, setCards] = useState<CardInfo[]>([{ id: 0, row: 2, col: 1 }]);
+  const [cards, setCards] = useState<ICardInfo[]>([{ id: 0, row: 2, col: 1 }]);
   const handleKeyUp = (e: React.KeyboardEvent) => {
     switch (e.code) {
       case 'ArrowLeft':
