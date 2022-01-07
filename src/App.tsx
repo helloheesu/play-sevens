@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -40,10 +41,37 @@ const Card = styled.div`
   grid-column: 2/3;
   grid-row: 3/4;
 `;
+const enum Direction {
+  Up = 'UP',
+  Down = 'DOWN',
+  Left = 'LEFT',
+  Right = 'RIGHT',
+}
 
 function App() {
+  const move = (direction: Direction) => {
+    console.log(direction);
+  };
+  const handleKeyUp = (e: React.KeyboardEvent) => {
+    switch (e.code) {
+      case 'ArrowLeft':
+        move(Direction.Left);
+        break;
+      case 'ArrowRight':
+        move(Direction.Right);
+        break;
+      case 'ArrowUp':
+        move(Direction.Up);
+        break;
+      case 'ArrowDown':
+        move(Direction.Down);
+        break;
+      default:
+        break;
+    }
+  };
   return (
-    <Wrapper>
+    <Wrapper onKeyUp={handleKeyUp} tabIndex={0}>
       <Container>
         <Grid>
           <Cell />
