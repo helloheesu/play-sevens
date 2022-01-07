@@ -17,18 +17,28 @@ const Container = styled.div`
   max-height: 1350px;
   height: 80%;
   width: 80%;
+  position: relative;
 `;
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
+  width: 100%;
   height: 100%;
   padding: 1em;
   gap: 1em;
   box-sizing: border-box;
+  position: absolute;
 `;
 const Cell = styled.div`
   background-color: darkgray;
+`;
+const Card = styled.div`
+  background-color: pink;
+  width: 100%;
+  height: 100%;
+  grid-column: 2/3;
+  grid-row: 3/4;
 `;
 
 function App() {
@@ -48,6 +58,9 @@ function App() {
           <Cell />
           <Cell />
           <Cell />
+        </Grid>
+        <Grid>
+          <Card />
         </Grid>
       </Container>
     </Wrapper>
