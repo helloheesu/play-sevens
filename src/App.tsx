@@ -6,9 +6,10 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 2em;
+  box-sizing: border-box;
 `;
 const Container = styled.div`
-  margin: 2em;
   background-color: #eee;
   min-width: 300px;
   min-height: 450px;
@@ -17,11 +18,38 @@ const Container = styled.div`
   height: 80%;
   width: 80%;
 `;
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  height: 100%;
+  padding: 1em;
+  gap: 1em;
+  box-sizing: border-box;
+`;
+const Cell = styled.div`
+  background-color: darkgray;
+`;
 
 function App() {
   return (
     <Wrapper>
-      <Container></Container>
+      <Container>
+        <Grid>
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+          <Cell />
+        </Grid>
+      </Container>
     </Wrapper>
   );
 }
