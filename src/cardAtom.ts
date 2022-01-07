@@ -26,3 +26,9 @@ export const generateRandomColIndexState = selector({
     };
   },
 });
+
+export let newCardId = 0;
+
+export const generateNewCardId = () => {
+  return newCardId++;
+};

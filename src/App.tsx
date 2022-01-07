@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Card from './Card';
 import {
+  generateNewCardId,
   generateRandomColIndexState,
   generateRandomRowIndexState,
   gridSizeState,
@@ -45,7 +46,6 @@ function App() {
   const generateRandomRowIndex = useRecoilValue(generateRandomRowIndexState);
   const generateRandomColIndex = useRecoilValue(generateRandomColIndexState);
 
-  const cardIndex = useRef(0);
   const [cards, setCards] = useState<ICardInfo[]>([]);
 
   const getNewCard = (
@@ -57,11 +57,8 @@ function App() {
       return null;
     }
 
-    const newCardIndex = cardIndex.current;
-    cardIndex.current = cardIndex.current + 1;
-
     return {
-      id: newCardIndex,
+      id: generateNewCardId(),
       row,
       col,
       toBeMerged: false,
