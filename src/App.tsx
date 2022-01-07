@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Card from './Card';
+import {
+  generateRandomColIndexState,
+  generateRandomRowIndexState,
+  gridSizeState,
+} from './cardAtom';
+import Grid from './Grid';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -22,20 +29,6 @@ const Container = styled.div`
   position: relative;
 `;
 
-const ROW_SIZE = 4;
-const COL_SIZE = 3;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-rows: repeat(${ROW_SIZE}, 1fr);
-  grid-template-columns: repeat(${COL_SIZE}, 1fr);
-  width: 100%;
-  height: 100%;
-  padding: 1em;
-  gap: 1em;
-  box-sizing: border-box;
-  position: absolute;
-`;
 const Cell = styled.div`
   background-color: darkgray;
 `;
@@ -48,15 +41,13 @@ interface ICardInfo {
 }
 
 function App() {
+  const { row: ROW_SIZE, col: COL_SIZE } = useRecoilValue(gridSizeState);
+  const generateRandomRowIndex = useRecoilValue(generateRandomRowIndexState);
+  const generateRandomColIndex = useRecoilValue(generateRandomColIndexState);
+
   const cardIndex = useRef(0);
   const [cards, setCards] = useState<ICardInfo[]>([]);
 
-  const getRandomRow = () => {
-    return Math.floor(Math.random() * ROW_SIZE);
-  };
-  const getRandomCol = () => {
-    return Math.floor(Math.random() * COL_SIZE);
-  };
   const getNewCard = (
     cards: ICardInfo[],
     row: number,
@@ -96,7 +87,7 @@ function App() {
         );
         setCards((cards) => [
           ...cards,
-          getNewCard(cards, getRandomRow(), COL_SIZE - 1)!,
+          getNewCard(cards, generateRandomRowIndex(), COL_SIZE - 1)!,
         ]);
         break;
 
@@ -109,7 +100,10 @@ function App() {
             toBeMerged: col + 1 > COL_SIZE - 1,
           }))
         );
-        setCards((cards) => [...cards, getNewCard(cards, getRandomRow(), 0)!]);
+        setCards((cards) => [
+          ...cards,
+          getNewCard(cards, generateRandomRowIndex(), 0)!,
+        ]);
         break;
 
       case 'ArrowUp':
@@ -123,7 +117,7 @@ function App() {
         );
         setCards((cards) => [
           ...cards,
-          getNewCard(cards, ROW_SIZE - 1, getRandomCol())!,
+          getNewCard(cards, ROW_SIZE - 1, generateRandomColIndex())!,
         ]);
         break;
 
@@ -136,7 +130,10 @@ function App() {
             toBeMerged: row + 1 > ROW_SIZE - 1,
           }))
         );
-        setCards((cards) => [...cards, getNewCard(cards, 0, getRandomCol())!]);
+        setCards((cards) => [
+          ...cards,
+          getNewCard(cards, 0, generateRandomColIndex())!,
+        ]);
         break;
 
       default:
