@@ -139,13 +139,6 @@ function App() {
       setIsGameEnded(true);
     }
   }, [cardSlots, ROW_SIZE, COL_SIZE]);
-  useEffect(() => {
-    console.log('end?', isGameEnded);
-
-    if (isGameEnded === true) {
-      alert('Game Ended!');
-    }
-  }, [isGameEnded]);
 
   useEffect(() => {
     const mergeCardIfPossible = (
@@ -344,12 +337,29 @@ function App() {
     return () => document.removeEventListener('keyup', handleKeyUp);
   }, [COL_SIZE, ROW_SIZE, generateRandomColIndex, generateRandomRowIndex]);
 
-  const calculateScore = (): number => {
-    return 0;
+  const calculateScore = (value: number) => {
+    if (value % 3 !== 0) {
+      return 0;
+    } else {
+      const cardScore = Math.pow(3, Math.log2(value / 3) + 1);
+      return cardScore;
+    }
+  };
+
+  const calculateTotalScore = (): number => {
+    const totalScore = cardSlots.reduce((score, card) => {
+      if (!card) {
+        return score;
+      } else {
+        return score + calculateScore(card.value);
+      }
+    }, 0);
+
+    return totalScore;
   };
   return (
     <Wrapper>
-      {true && <Modal score={calculateScore()} />}
+      {isGameEnded && <Modal score={calculateTotalScore()} />}
       <Container>
         <Grid>
           {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
@@ -365,6 +375,7 @@ function App() {
                   row={Math.floor(index / COL_SIZE)}
                   col={index % COL_SIZE}
                   value={card.value}
+                  score={!isGameEnded ? undefined : calculateScore(card.value)}
                 />
               )
           )}
