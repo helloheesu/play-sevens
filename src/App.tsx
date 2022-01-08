@@ -119,16 +119,19 @@ function App() {
       return false;
     };
 
-    const newCardIfPossible = (
+    const generateNewCard = (
       cardSlots: (ICardInfo | null)[],
-      newCardIndex: number
+      getNextIndex: () => number
     ) => {
-      if (!cardSlots[newCardIndex]) {
-        cardSlots[newCardIndex] = getNewCard(generateRandomNewValue());
-        console.log('newCard', newCardIndex, {
-          ...cardSlots[newCardIndex],
-        });
-      }
+      let newCardIndex;
+      do {
+        newCardIndex = getNextIndex();
+      } while (cardSlots[newCardIndex]);
+
+      cardSlots[newCardIndex] = getNewCard(generateRandomNewValue());
+      console.log('newCard', newCardIndex, {
+        ...cardSlots[newCardIndex],
+      });
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -155,9 +158,13 @@ function App() {
             }
 
             if (hasAnyMoved) {
-              const newCardIndex =
-                generateRandomRowIndex() * COL_SIZE + COL_SIZE - 1;
-              newCardIfPossible(newCardSlots, newCardIndex);
+              let rowIndex = generateRandomRowIndex();
+              const getNextIndex = () => {
+                const newCardIndex = rowIndex * COL_SIZE + COL_SIZE - 1;
+                rowIndex = (rowIndex + 1) % ROW_SIZE;
+                return newCardIndex;
+              };
+              generateNewCard(newCardSlots, getNextIndex);
             }
 
             return newCardSlots;
@@ -185,8 +192,13 @@ function App() {
             }
 
             if (hasAnyMoved) {
-              const newCardIndex = generateRandomRowIndex() * COL_SIZE + 0;
-              newCardIfPossible(newCardSlots, newCardIndex);
+              let rowIndex = generateRandomRowIndex();
+              const getNextIndex = () => {
+                const newCardIndex = rowIndex * COL_SIZE + 0;
+                rowIndex = (rowIndex + 1) % ROW_SIZE;
+                return newCardIndex;
+              };
+              generateNewCard(newCardSlots, getNextIndex);
             }
 
             return newCardSlots;
@@ -213,9 +225,13 @@ function App() {
             }
 
             if (hasAnyMoved) {
-              const newCardIndex =
-                (ROW_SIZE - 1) * COL_SIZE + generateRandomColIndex();
-              newCardIfPossible(newCardSlots, newCardIndex);
+              let colIndex = generateRandomColIndex();
+              const getNextIndex = () => {
+                const newCardIndex = (ROW_SIZE - 1) * COL_SIZE + colIndex;
+                colIndex = (colIndex + 1) % COL_SIZE;
+                return newCardIndex;
+              };
+              generateNewCard(newCardSlots, getNextIndex);
             }
 
             return newCardSlots;
@@ -242,8 +258,13 @@ function App() {
             }
 
             if (hasAnyMoved) {
-              const newCardIndex = 0 * COL_SIZE + generateRandomColIndex();
-              newCardIfPossible(newCardSlots, newCardIndex);
+              let colIndex = generateRandomColIndex();
+              const getNextIndex = () => {
+                const newCardIndex = 0 * COL_SIZE + colIndex;
+                colIndex = (colIndex + 1) % COL_SIZE;
+                return newCardIndex;
+              };
+              generateNewCard(newCardSlots, getNextIndex);
             }
 
             return newCardSlots;
