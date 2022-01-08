@@ -73,8 +73,15 @@ function App() {
   //   cardSlots.map((card) => ({ ...card }))
   // );
 
-  const isMergeable = (cardA: ICardInfo, cardB: ICardInfo): boolean => {
-    console.log(cardA.value, cardB.value, cardA.value + cardB.value);
+  const isMergeable = (
+    cardA: ICardInfo | null,
+    cardB: ICardInfo | null
+  ): boolean => {
+    if (!cardA || !cardB) {
+      return true;
+    }
+
+    // console.log(cardA.value, cardB.value, cardA.value + cardB.value);
 
     if (cardA.value + cardB.value === 3) {
       return true;
@@ -82,6 +89,63 @@ function App() {
 
     return (cardA.value + cardB.value) % 3 === 0 && cardA.value === cardB.value;
   };
+
+  const [isGameEnded, setIsGameEnded] = useState(false);
+  useEffect(() => {
+    const isAnyMoveable = (): boolean => {
+      for (let row = 0; row < ROW_SIZE; row++) {
+        for (let col = 0; col < COL_SIZE; col++) {
+          const index = row * COL_SIZE + col;
+          const card = cardSlots[index];
+
+          if (!card) {
+            console.log('empty moveable', index);
+
+            return true;
+          }
+
+          const rightIndex = row * COL_SIZE + col + 1;
+          if (col < COL_SIZE - 1 && isMergeable(card, cardSlots[rightIndex])) {
+            console.log('right moveable', index, rightIndex, row, col);
+
+            return true;
+          }
+          const leftIndex = row * COL_SIZE + col - 1;
+          if (col > 0 && isMergeable(card, cardSlots[leftIndex])) {
+            console.log('left moveable', index, leftIndex, row, col);
+
+            return true;
+          }
+          const downIndex = (row + 1) * COL_SIZE + col;
+          if (row < ROW_SIZE - 1 && isMergeable(card, cardSlots[downIndex])) {
+            console.log('down moveable', index, downIndex, row, col);
+
+            return true;
+          }
+          const upIndex = (row - 1) * COL_SIZE + col;
+          if (row > 0 && isMergeable(card, cardSlots[upIndex])) {
+            console.log('up moveable', index, upIndex, row, col);
+
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    if (isAnyMoveable() === false) {
+      console.log('ended');
+
+      setIsGameEnded(true);
+    }
+  }, [cardSlots, ROW_SIZE, COL_SIZE]);
+  useEffect(() => {
+    console.log('end?', isGameEnded);
+
+    if (isGameEnded === true) {
+      alert('Game Ended!');
+    }
+  }, [isGameEnded]);
 
   useEffect(() => {
     const mergeCardIfPossible = (
@@ -94,10 +158,10 @@ function App() {
 
       if (upcomingCard) {
         if (previousCard) {
-          console.log('merging', { ...previousCard }, { ...upcomingCard });
+          // console.log('merging', { ...previousCard }, { ...upcomingCard });
 
           if (isMergeable(previousCard, upcomingCard)) {
-            console.log('mergeable??');
+            // console.log('mergeable??');
 
             cardSlots[previousIndex] = {
               ...previousCard,
@@ -105,7 +169,7 @@ function App() {
             };
             cardSlots[upcomingIndex] = null;
           } else {
-            console.log('NO');
+            // console.log('NO');
             // do nothing
             return false;
           }
@@ -129,9 +193,9 @@ function App() {
       } while (cardSlots[newCardIndex]);
 
       cardSlots[newCardIndex] = getNewCard(generateRandomNewValue());
-      console.log('newCard', newCardIndex, {
-        ...cardSlots[newCardIndex],
-      });
+      // console.log('newCard', newCardIndex, {
+      //   ...cardSlots[newCardIndex],
+      // });
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
