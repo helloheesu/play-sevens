@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Card from './Card';
-import {
-  generateNewCardId,
-  generateRandomColIndexState,
-  generateRandomRowIndexState,
-  gridSizeState,
-} from './cardAtom';
+import { generateNewCardId } from './cardAtom';
 import Grid from './Grid';
 import Modal from './Modal';
+import useGridToLine from './useGridToLine';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -46,9 +41,19 @@ const generateRandomNewValue = () => {
 };
 
 function App() {
-  const { row: ROW_SIZE, col: COL_SIZE } = useRecoilValue(gridSizeState);
-  const generateRandomRowIndex = useRecoilValue(generateRandomRowIndexState);
-  const generateRandomColIndex = useRecoilValue(generateRandomColIndexState);
+  const ROW_SIZE = 5;
+  const COL_SIZE = 3;
+  const {
+    generateRandomRowIndex,
+    generateRandomColIndex,
+    getIndex,
+    getRightIndex,
+    getLeftIndex,
+    getDownIndex,
+    getUpIndex,
+    getGridIndexFromLineIndex,
+    LINE_SIZE,
+  } = useGridToLine(ROW_SIZE, COL_SIZE);
 
   const [cardSlots, setCardSlots] = useState<(ICardInfo | null)[]>([]);
 
@@ -60,13 +65,13 @@ function App() {
   };
 
   useEffect(() => {
-    const initialCardSlots = new Array(ROW_SIZE * COL_SIZE);
+    const initialCardSlots = new Array(LINE_SIZE);
     const initialCardInfo = { row: 2, col: 1, value: generateRandomNewValue() };
-    initialCardSlots[initialCardInfo.row * COL_SIZE + initialCardInfo.col] =
+    initialCardSlots[getIndex(initialCardInfo.row, initialCardInfo.col)] =
       getNewCard(initialCardInfo.value);
 
     setCardSlots(initialCardSlots);
-  }, [ROW_SIZE, COL_SIZE]);
+  }, [LINE_SIZE, getIndex]);
 
   // console.log(
   //   'log',
@@ -95,7 +100,7 @@ function App() {
     const isAnyMoveable = (): boolean => {
       for (let row = 0; row < ROW_SIZE; row++) {
         for (let col = 0; col < COL_SIZE; col++) {
-          const index = row * COL_SIZE + col;
+          const index = getIndex(row, col);
           const card = cardSlots[index];
 
           if (!card) {
@@ -104,27 +109,27 @@ function App() {
             return true;
           }
 
-          const rightIndex = row * COL_SIZE + col + 1;
-          if (col < COL_SIZE - 1 && isMergeable(card, cardSlots[rightIndex])) {
-            console.log('right moveable', index, rightIndex, row, col);
+          const rightIndex = getRightIndex(row, col);
+          if (rightIndex !== null && isMergeable(card, cardSlots[rightIndex])) {
+            console.log('right moveable', row, col);
 
             return true;
           }
-          const leftIndex = row * COL_SIZE + col - 1;
-          if (col > 0 && isMergeable(card, cardSlots[leftIndex])) {
-            console.log('left moveable', index, leftIndex, row, col);
+          const leftIndex = getLeftIndex(row, col);
+          if (leftIndex !== null && isMergeable(card, cardSlots[leftIndex])) {
+            console.log('left moveable', row, col);
 
             return true;
           }
-          const downIndex = (row + 1) * COL_SIZE + col;
-          if (row < ROW_SIZE - 1 && isMergeable(card, cardSlots[downIndex])) {
-            console.log('down moveable', index, downIndex, row, col);
+          const downIndex = getDownIndex(row, col);
+          if (downIndex !== null && isMergeable(card, cardSlots[downIndex])) {
+            console.log('down moveable', row, col);
 
             return true;
           }
-          const upIndex = (row - 1) * COL_SIZE + col;
-          if (row > 0 && isMergeable(card, cardSlots[upIndex])) {
-            console.log('up moveable', index, upIndex, row, col);
+          const upIndex = getUpIndex(row, col);
+          if (upIndex !== null && isMergeable(card, cardSlots[upIndex])) {
+            console.log('up moveable', row, col);
 
             return true;
           }
@@ -138,7 +143,14 @@ function App() {
 
       setIsGameEnded(true);
     }
-  }, [cardSlots, ROW_SIZE, COL_SIZE]);
+  }, [
+    cardSlots,
+    getDownIndex,
+    getIndex,
+    getLeftIndex,
+    getRightIndex,
+    getUpIndex,
+  ]);
 
   useEffect(() => {
     const mergeCardIfPossible = (
@@ -200,10 +212,13 @@ function App() {
             const newCardSlots = [...cardSlots];
             let hasAnyMoved = false;
 
-            for (let col = 0; col <= COL_SIZE - 2; col++) {
+            for (let col = 0; col <= COL_SIZE - 1; col++) {
               for (let row = 0; row <= ROW_SIZE - 1; row++) {
-                const index = row * COL_SIZE + col;
-                const rightIndex = row * COL_SIZE + col + 1;
+                const index = getIndex(row, col);
+                const rightIndex = getRightIndex(row, col);
+                if (rightIndex === null) {
+                  continue;
+                }
 
                 const hasMoved = mergeCardIfPossible(
                   newCardSlots,
@@ -234,10 +249,13 @@ function App() {
             const newCardSlots = [...cardSlots];
             let hasAnyMoved = false;
 
-            for (let col = COL_SIZE - 1; col >= 1; col--) {
+            for (let col = COL_SIZE - 1; col >= 0; col--) {
               for (let row = 0; row <= ROW_SIZE - 1; row++) {
-                const index = row * COL_SIZE + col;
-                const leftIndex = row * COL_SIZE + col - 1;
+                const index = getIndex(row, col);
+                const leftIndex = getLeftIndex(row, col);
+                if (leftIndex === null) {
+                  continue;
+                }
 
                 const hasMoved = mergeCardIfPossible(
                   newCardSlots,
@@ -267,10 +285,13 @@ function App() {
             const newCardSlots = [...cardSlots];
             let hasAnyMoved = false;
 
-            for (let row = 0; row <= ROW_SIZE - 2; row++) {
+            for (let row = 0; row <= ROW_SIZE - 1; row++) {
               for (let col = 0; col <= COL_SIZE - 1; col++) {
-                const index = row * COL_SIZE + col;
-                const downIndex = (row + 1) * COL_SIZE + col;
+                const index = getIndex(row, col);
+                const downIndex = getDownIndex(row, col);
+                if (downIndex === null) {
+                  continue;
+                }
 
                 const hasMoved = mergeCardIfPossible(
                   newCardSlots,
@@ -300,10 +321,13 @@ function App() {
             const newCardSlots = [...cardSlots];
             let hasAnyMoved = false;
 
-            for (let row = ROW_SIZE - 1; row >= 1; row--) {
+            for (let row = ROW_SIZE - 1; row >= 0; row--) {
               for (let col = 0; col <= COL_SIZE - 1; col++) {
-                const index = row * COL_SIZE + col;
-                const upIndex = (row - 1) * COL_SIZE + col;
+                const index = getIndex(row, col);
+                const upIndex = getUpIndex(row, col);
+                if (upIndex === null) {
+                  continue;
+                }
 
                 const hasMoved = mergeCardIfPossible(
                   newCardSlots,
@@ -335,7 +359,15 @@ function App() {
 
     document.addEventListener('keyup', handleKeyUp);
     return () => document.removeEventListener('keyup', handleKeyUp);
-  }, [COL_SIZE, ROW_SIZE, generateRandomColIndex, generateRandomRowIndex]);
+  }, [
+    generateRandomColIndex,
+    generateRandomRowIndex,
+    getDownIndex,
+    getIndex,
+    getLeftIndex,
+    getRightIndex,
+    getUpIndex,
+  ]);
 
   const calculateScore = (value: number) => {
     if (value % 3 !== 0) {
@@ -367,18 +399,20 @@ function App() {
           ))}
         </Grid>
         <Grid>
-          {cardSlots.map(
-            (card, index) =>
+          {cardSlots.map((card, index) => {
+            const { row, col } = getGridIndexFromLineIndex(index);
+            return (
               card && (
                 <Card
                   key={card.id}
-                  row={Math.floor(index / COL_SIZE)}
-                  col={index % COL_SIZE}
+                  row={row}
+                  col={col}
                   value={card.value}
                   score={!isGameEnded ? undefined : calculateScore(card.value)}
                 />
               )
-          )}
+            );
+          })}
         </Grid>
       </Container>
     </Wrapper>
