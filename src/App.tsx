@@ -62,14 +62,24 @@ function App() {
     setCardSlots(initialCardSlots);
   }, [ROW_SIZE, COL_SIZE]);
 
-  console.log(
-    'log',
-    cardSlots.map((card) => ({ ...card }))
-  );
+  // console.log(
+  //   'log',
+  //   cardSlots.map((card) => ({ ...card }))
+  // );
+
+  const isMergeable = (cardA: ICardInfo, cardB: ICardInfo): boolean => {
+    console.log(cardA.value, cardB.value, cardA.value + cardB.value);
+
+    if (cardA.value + cardB.value === 3) {
+      return true;
+    }
+
+    return (cardA.value + cardB.value) % 3 === 0 && cardA.value === cardB.value;
+  };
 
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
-      console.log(e.code);
+      // console.log(e.code);
 
       switch (e.code) {
         case 'ArrowLeft':
@@ -91,16 +101,20 @@ function App() {
                       { ...upcomingCard }
                     );
 
-                    if (true) {
-                      // mergeable
+                    if (isMergeable(previousCard, upcomingCard)) {
+                      console.log('mergeable??');
+
                       newCardSlots[index] = {
                         ...previousCard,
                         value: previousCard.value + upcomingCard.value,
                       };
                       newCardSlots[rightIndex] = null;
+                    } else {
+                      console.log('NO');
+                      // do nothing
                     }
                   } else {
-                    console.log('moving', previousCard, upcomingCard);
+                    // console.log('moving', previousCard, upcomingCard);
                     newCardSlots[index] = upcomingCard;
                     newCardSlots[rightIndex] = null;
                   }
@@ -110,10 +124,12 @@ function App() {
 
             const newCardIndex =
               generateRandomRowIndex() * COL_SIZE + COL_SIZE - 1;
-            newCardSlots[newCardIndex] = getNewCard(1);
-            console.log('newCard', newCardIndex, {
-              ...newCardSlots[newCardIndex],
-            });
+            if (!newCardSlots[newCardIndex]) {
+              newCardSlots[newCardIndex] = getNewCard(1);
+              // console.log('newCard', newCardIndex, {
+              //   ...newCardSlots[newCardIndex],
+              // });
+            }
 
             return newCardSlots;
           });
@@ -139,16 +155,17 @@ function App() {
                       { ...upcomingCard }
                     );
 
-                    if (true) {
-                      // mergeable
+                    if (isMergeable(previousCard, upcomingCard)) {
                       newCardSlots[index] = {
                         ...previousCard,
                         value: previousCard.value + upcomingCard.value,
                       };
                       newCardSlots[leftIndex] = null;
+                    } else {
+                      // do nothing
                     }
                   } else {
-                    console.log('moving', previousCard, upcomingCard);
+                    // console.log('moving', previousCard, upcomingCard);
                     newCardSlots[index] = upcomingCard;
                     newCardSlots[leftIndex] = null;
                   }
@@ -157,10 +174,12 @@ function App() {
             }
 
             const newCardIndex = generateRandomRowIndex() * COL_SIZE + 0;
-            newCardSlots[newCardIndex] = getNewCard(1);
-            console.log('newCard', newCardIndex, {
-              ...newCardSlots[newCardIndex],
-            });
+            if (!newCardSlots[newCardIndex]) {
+              newCardSlots[newCardIndex] = getNewCard(1);
+              // console.log('newCard', newCardIndex, {
+              //   ...newCardSlots[newCardIndex],
+              // });
+            }
 
             return newCardSlots;
           });
@@ -185,16 +204,17 @@ function App() {
                       { ...upcomingCard }
                     );
 
-                    if (true) {
-                      // mergeable
+                    if (isMergeable(previousCard, upcomingCard)) {
                       newCardSlots[index] = {
                         ...previousCard,
                         value: previousCard.value + upcomingCard.value,
                       };
                       newCardSlots[downIndex] = null;
+                    } else {
+                      // do nothing
                     }
                   } else {
-                    console.log('moving', previousCard, upcomingCard);
+                    // console.log('moving', previousCard, upcomingCard);
                     newCardSlots[index] = upcomingCard;
                     newCardSlots[downIndex] = null;
                   }
@@ -204,10 +224,12 @@ function App() {
 
             const newCardIndex =
               (ROW_SIZE - 1) * COL_SIZE + generateRandomColIndex();
-            newCardSlots[newCardIndex] = getNewCard(1);
-            console.log('newCard', newCardIndex, {
-              ...newCardSlots[newCardIndex],
-            });
+            if (!newCardSlots[newCardIndex]) {
+              newCardSlots[newCardIndex] = getNewCard(1);
+              // console.log('newCard', newCardIndex, {
+              //   ...newCardSlots[newCardIndex],
+              // });
+            }
 
             return newCardSlots;
           });
@@ -232,16 +254,17 @@ function App() {
                       { ...upcomingCard }
                     );
 
-                    if (true) {
-                      // mergeable
+                    if (isMergeable(previousCard, upcomingCard)) {
                       newCardSlots[index] = {
                         ...previousCard,
                         value: previousCard.value + upcomingCard.value,
                       };
                       newCardSlots[upIndex] = null;
+                    } else {
+                      // do nothing
                     }
                   } else {
-                    console.log('moving', previousCard, upcomingCard);
+                    // console.log('moving', previousCard, upcomingCard);
                     newCardSlots[index] = upcomingCard;
                     newCardSlots[upIndex] = null;
                   }
@@ -250,10 +273,12 @@ function App() {
             }
 
             const newCardIndex = 0 * COL_SIZE + generateRandomColIndex();
-            newCardSlots[newCardIndex] = getNewCard(1);
-            console.log('newCard', newCardIndex, {
-              ...newCardSlots[newCardIndex],
-            });
+            if (!newCardSlots[newCardIndex]) {
+              newCardSlots[newCardIndex] = getNewCard(1);
+              // console.log('newCard', newCardIndex, {
+              //   ...newCardSlots[newCardIndex],
+              // });
+            }
 
             return newCardSlots;
           });
