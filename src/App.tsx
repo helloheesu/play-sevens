@@ -110,6 +110,18 @@ function App() {
       }
     };
 
+    const newCardIfPossible = (
+      cardSlots: (ICardInfo | null)[],
+      newCardIndex: number
+    ) => {
+      if (!cardSlots[newCardIndex]) {
+        cardSlots[newCardIndex] = getNewCard(1);
+        console.log('newCard', newCardIndex, {
+          ...cardSlots[newCardIndex],
+        });
+      }
+    };
+
     const handleKeyUp = (e: KeyboardEvent) => {
       // console.log(e.code);
 
@@ -128,12 +140,7 @@ function App() {
 
             const newCardIndex =
               generateRandomRowIndex() * COL_SIZE + COL_SIZE - 1;
-            if (!newCardSlots[newCardIndex]) {
-              newCardSlots[newCardIndex] = getNewCard(1);
-              // console.log('newCard', newCardIndex, {
-              //   ...newCardSlots[newCardIndex],
-              // });
-            }
+            newCardIfPossible(newCardSlots, newCardIndex);
 
             return newCardSlots;
           });
@@ -153,12 +160,7 @@ function App() {
             }
 
             const newCardIndex = generateRandomRowIndex() * COL_SIZE + 0;
-            if (!newCardSlots[newCardIndex]) {
-              newCardSlots[newCardIndex] = getNewCard(1);
-              // console.log('newCard', newCardIndex, {
-              //   ...newCardSlots[newCardIndex],
-              // });
-            }
+            newCardIfPossible(newCardSlots, newCardIndex);
 
             return newCardSlots;
           });
@@ -178,12 +180,7 @@ function App() {
 
             const newCardIndex =
               (ROW_SIZE - 1) * COL_SIZE + generateRandomColIndex();
-            if (!newCardSlots[newCardIndex]) {
-              newCardSlots[newCardIndex] = getNewCard(1);
-              // console.log('newCard', newCardIndex, {
-              //   ...newCardSlots[newCardIndex],
-              // });
-            }
+            newCardIfPossible(newCardSlots, newCardIndex);
 
             return newCardSlots;
           });
@@ -202,12 +199,7 @@ function App() {
             }
 
             const newCardIndex = 0 * COL_SIZE + generateRandomColIndex();
-            if (!newCardSlots[newCardIndex]) {
-              newCardSlots[newCardIndex] = getNewCard(1);
-              // console.log('newCard', newCardIndex, {
-              //   ...newCardSlots[newCardIndex],
-              // });
-            }
+            newCardIfPossible(newCardSlots, newCardIndex);
 
             return newCardSlots;
           });
