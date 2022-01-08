@@ -62,209 +62,214 @@ function App() {
     setCardSlots(initialCardSlots);
   }, [ROW_SIZE, COL_SIZE]);
 
-  const handleKeyUp = (e: React.KeyboardEvent) => {
-    console.log(e.code);
-
-    switch (e.code) {
-      case 'ArrowLeft':
-        setCardSlots((cardSlots) => {
-          const newCardSlots = [...cardSlots];
-          for (let col = 0; col <= COL_SIZE - 2; col++) {
-            for (let row = 0; row <= ROW_SIZE - 1; row++) {
-              const index = row * COL_SIZE + col;
-              const rightIndex = row * COL_SIZE + col + 1;
-
-              const previousCard = newCardSlots[index];
-              const upcomingCard = newCardSlots[rightIndex];
-
-              if (upcomingCard) {
-                if (previousCard) {
-                  console.log(
-                    'merging',
-                    { ...previousCard },
-                    { ...upcomingCard }
-                  );
-
-                  if (true) {
-                    // mergeable
-                    newCardSlots[index] = {
-                      ...previousCard,
-                      value: previousCard.value + upcomingCard.value,
-                    };
-                    newCardSlots[rightIndex] = null;
-                  }
-                } else {
-                  console.log('moving', previousCard, upcomingCard);
-                  newCardSlots[index] = upcomingCard;
-                  newCardSlots[rightIndex] = null;
-                }
-              }
-            }
-          }
-
-          const newCardIndex =
-            generateRandomRowIndex() * COL_SIZE + COL_SIZE - 1;
-          newCardSlots[newCardIndex] = getNewCard(1);
-          console.log('newCard', newCardIndex, {
-            ...newCardSlots[newCardIndex],
-          });
-
-          return newCardSlots;
-        });
-
-        break;
-
-      case 'ArrowRight':
-        setCardSlots((cardSlots) => {
-          const newCardSlots = [...cardSlots];
-          for (let col = COL_SIZE - 1; col >= 1; col--) {
-            for (let row = 0; row <= ROW_SIZE - 1; row++) {
-              const index = row * COL_SIZE + col;
-              const leftIndex = row * COL_SIZE + col - 1;
-
-              const previousCard = newCardSlots[index];
-              const upcomingCard = newCardSlots[leftIndex];
-
-              if (upcomingCard) {
-                if (previousCard) {
-                  console.log(
-                    'merging',
-                    { ...previousCard },
-                    { ...upcomingCard }
-                  );
-
-                  if (true) {
-                    // mergeable
-                    newCardSlots[index] = {
-                      ...previousCard,
-                      value: previousCard.value + upcomingCard.value,
-                    };
-                    newCardSlots[leftIndex] = null;
-                  }
-                } else {
-                  console.log('moving', previousCard, upcomingCard);
-                  newCardSlots[index] = upcomingCard;
-                  newCardSlots[leftIndex] = null;
-                }
-              }
-            }
-          }
-
-          const newCardIndex = generateRandomRowIndex() * COL_SIZE + 0;
-          newCardSlots[newCardIndex] = getNewCard(1);
-          console.log('newCard', newCardIndex, {
-            ...newCardSlots[newCardIndex],
-          });
-
-          return newCardSlots;
-        });
-        break;
-
-      case 'ArrowUp':
-        setCardSlots((cardSlots) => {
-          const newCardSlots = [...cardSlots];
-          for (let row = 0; row <= ROW_SIZE - 2; row++) {
-            for (let col = 0; col <= COL_SIZE - 1; col++) {
-              const index = row * COL_SIZE + col;
-              const downIndex = (row + 1) * COL_SIZE + col;
-
-              const previousCard = newCardSlots[index];
-              const upcomingCard = newCardSlots[downIndex];
-
-              if (upcomingCard) {
-                if (previousCard) {
-                  console.log(
-                    'merging',
-                    { ...previousCard },
-                    { ...upcomingCard }
-                  );
-
-                  if (true) {
-                    // mergeable
-                    newCardSlots[index] = {
-                      ...previousCard,
-                      value: previousCard.value + upcomingCard.value,
-                    };
-                    newCardSlots[downIndex] = null;
-                  }
-                } else {
-                  console.log('moving', previousCard, upcomingCard);
-                  newCardSlots[index] = upcomingCard;
-                  newCardSlots[downIndex] = null;
-                }
-              }
-            }
-          }
-
-          const newCardIndex =
-            (ROW_SIZE - 1) * COL_SIZE + generateRandomColIndex();
-          newCardSlots[newCardIndex] = getNewCard(1);
-          console.log('newCard', newCardIndex, {
-            ...newCardSlots[newCardIndex],
-          });
-
-          return newCardSlots;
-        });
-        break;
-
-      case 'ArrowDown':
-        setCardSlots((cardSlots) => {
-          const newCardSlots = [...cardSlots];
-          for (let row = ROW_SIZE - 1; row >= 1; row--) {
-            for (let col = 0; col <= COL_SIZE - 1; col++) {
-              const index = row * COL_SIZE + col;
-              const upIndex = (row - 1) * COL_SIZE + col;
-
-              const previousCard = newCardSlots[index];
-              const upcomingCard = newCardSlots[upIndex];
-
-              if (upcomingCard) {
-                if (previousCard) {
-                  console.log(
-                    'merging',
-                    { ...previousCard },
-                    { ...upcomingCard }
-                  );
-
-                  if (true) {
-                    // mergeable
-                    newCardSlots[index] = {
-                      ...previousCard,
-                      value: previousCard.value + upcomingCard.value,
-                    };
-                    newCardSlots[upIndex] = null;
-                  }
-                } else {
-                  console.log('moving', previousCard, upcomingCard);
-                  newCardSlots[index] = upcomingCard;
-                  newCardSlots[upIndex] = null;
-                }
-              }
-            }
-          }
-
-          const newCardIndex = 0 * COL_SIZE + generateRandomColIndex();
-          newCardSlots[newCardIndex] = getNewCard(1);
-          console.log('newCard', newCardIndex, {
-            ...newCardSlots[newCardIndex],
-          });
-
-          return newCardSlots;
-        });
-        break;
-
-      default:
-        break;
-    }
-  };
-
   console.log(
     'log',
     cardSlots.map((card) => ({ ...card }))
   );
 
+  useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      console.log(e.code);
+
+      switch (e.code) {
+        case 'ArrowLeft':
+          setCardSlots((cardSlots) => {
+            const newCardSlots = [...cardSlots];
+            for (let col = 0; col <= COL_SIZE - 2; col++) {
+              for (let row = 0; row <= ROW_SIZE - 1; row++) {
+                const index = row * COL_SIZE + col;
+                const rightIndex = row * COL_SIZE + col + 1;
+
+                const previousCard = newCardSlots[index];
+                const upcomingCard = newCardSlots[rightIndex];
+
+                if (upcomingCard) {
+                  if (previousCard) {
+                    console.log(
+                      'merging',
+                      { ...previousCard },
+                      { ...upcomingCard }
+                    );
+
+                    if (true) {
+                      // mergeable
+                      newCardSlots[index] = {
+                        ...previousCard,
+                        value: previousCard.value + upcomingCard.value,
+                      };
+                      newCardSlots[rightIndex] = null;
+                    }
+                  } else {
+                    console.log('moving', previousCard, upcomingCard);
+                    newCardSlots[index] = upcomingCard;
+                    newCardSlots[rightIndex] = null;
+                  }
+                }
+              }
+            }
+
+            const newCardIndex =
+              generateRandomRowIndex() * COL_SIZE + COL_SIZE - 1;
+            newCardSlots[newCardIndex] = getNewCard(1);
+            console.log('newCard', newCardIndex, {
+              ...newCardSlots[newCardIndex],
+            });
+
+            return newCardSlots;
+          });
+
+          break;
+
+        case 'ArrowRight':
+          setCardSlots((cardSlots) => {
+            const newCardSlots = [...cardSlots];
+            for (let col = COL_SIZE - 1; col >= 1; col--) {
+              for (let row = 0; row <= ROW_SIZE - 1; row++) {
+                const index = row * COL_SIZE + col;
+                const leftIndex = row * COL_SIZE + col - 1;
+
+                const previousCard = newCardSlots[index];
+                const upcomingCard = newCardSlots[leftIndex];
+
+                if (upcomingCard) {
+                  if (previousCard) {
+                    console.log(
+                      'merging',
+                      { ...previousCard },
+                      { ...upcomingCard }
+                    );
+
+                    if (true) {
+                      // mergeable
+                      newCardSlots[index] = {
+                        ...previousCard,
+                        value: previousCard.value + upcomingCard.value,
+                      };
+                      newCardSlots[leftIndex] = null;
+                    }
+                  } else {
+                    console.log('moving', previousCard, upcomingCard);
+                    newCardSlots[index] = upcomingCard;
+                    newCardSlots[leftIndex] = null;
+                  }
+                }
+              }
+            }
+
+            const newCardIndex = generateRandomRowIndex() * COL_SIZE + 0;
+            newCardSlots[newCardIndex] = getNewCard(1);
+            console.log('newCard', newCardIndex, {
+              ...newCardSlots[newCardIndex],
+            });
+
+            return newCardSlots;
+          });
+          break;
+
+        case 'ArrowUp':
+          setCardSlots((cardSlots) => {
+            const newCardSlots = [...cardSlots];
+            for (let row = 0; row <= ROW_SIZE - 2; row++) {
+              for (let col = 0; col <= COL_SIZE - 1; col++) {
+                const index = row * COL_SIZE + col;
+                const downIndex = (row + 1) * COL_SIZE + col;
+
+                const previousCard = newCardSlots[index];
+                const upcomingCard = newCardSlots[downIndex];
+
+                if (upcomingCard) {
+                  if (previousCard) {
+                    console.log(
+                      'merging',
+                      { ...previousCard },
+                      { ...upcomingCard }
+                    );
+
+                    if (true) {
+                      // mergeable
+                      newCardSlots[index] = {
+                        ...previousCard,
+                        value: previousCard.value + upcomingCard.value,
+                      };
+                      newCardSlots[downIndex] = null;
+                    }
+                  } else {
+                    console.log('moving', previousCard, upcomingCard);
+                    newCardSlots[index] = upcomingCard;
+                    newCardSlots[downIndex] = null;
+                  }
+                }
+              }
+            }
+
+            const newCardIndex =
+              (ROW_SIZE - 1) * COL_SIZE + generateRandomColIndex();
+            newCardSlots[newCardIndex] = getNewCard(1);
+            console.log('newCard', newCardIndex, {
+              ...newCardSlots[newCardIndex],
+            });
+
+            return newCardSlots;
+          });
+          break;
+
+        case 'ArrowDown':
+          setCardSlots((cardSlots) => {
+            const newCardSlots = [...cardSlots];
+            for (let row = ROW_SIZE - 1; row >= 1; row--) {
+              for (let col = 0; col <= COL_SIZE - 1; col++) {
+                const index = row * COL_SIZE + col;
+                const upIndex = (row - 1) * COL_SIZE + col;
+
+                const previousCard = newCardSlots[index];
+                const upcomingCard = newCardSlots[upIndex];
+
+                if (upcomingCard) {
+                  if (previousCard) {
+                    console.log(
+                      'merging',
+                      { ...previousCard },
+                      { ...upcomingCard }
+                    );
+
+                    if (true) {
+                      // mergeable
+                      newCardSlots[index] = {
+                        ...previousCard,
+                        value: previousCard.value + upcomingCard.value,
+                      };
+                      newCardSlots[upIndex] = null;
+                    }
+                  } else {
+                    console.log('moving', previousCard, upcomingCard);
+                    newCardSlots[index] = upcomingCard;
+                    newCardSlots[upIndex] = null;
+                  }
+                }
+              }
+            }
+
+            const newCardIndex = 0 * COL_SIZE + generateRandomColIndex();
+            newCardSlots[newCardIndex] = getNewCard(1);
+            console.log('newCard', newCardIndex, {
+              ...newCardSlots[newCardIndex],
+            });
+
+            return newCardSlots;
+          });
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keyup', handleKeyUp);
+    return () => document.removeEventListener('keyup', handleKeyUp);
+  }, [COL_SIZE, ROW_SIZE, generateRandomColIndex, generateRandomRowIndex]);
+
   return (
-    <Wrapper onKeyUp={handleKeyUp} tabIndex={0}>
+    <Wrapper>
       <Container>
         <Grid>
           {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
