@@ -39,6 +39,12 @@ interface ICardInfo {
   value: number;
 }
 
+const NEW_CARD_VALUES = [1, 1, 1, 2, 2, 2, 3];
+const generateRandomNewValue = () => {
+  const randomIndex = Math.floor(Math.random() * NEW_CARD_VALUES.length);
+  return NEW_CARD_VALUES[randomIndex];
+};
+
 function App() {
   const { row: ROW_SIZE, col: COL_SIZE } = useRecoilValue(gridSizeState);
   const generateRandomRowIndex = useRecoilValue(generateRandomRowIndexState);
@@ -55,7 +61,7 @@ function App() {
 
   useEffect(() => {
     const initialCardSlots = new Array(ROW_SIZE * COL_SIZE);
-    const initialCardInfo = { row: 2, col: 1, value: 1 };
+    const initialCardInfo = { row: 2, col: 1, value: generateRandomNewValue() };
     initialCardSlots[initialCardInfo.row * COL_SIZE + initialCardInfo.col] =
       getNewCard(initialCardInfo.value);
 
@@ -118,7 +124,7 @@ function App() {
       newCardIndex: number
     ) => {
       if (!cardSlots[newCardIndex]) {
-        cardSlots[newCardIndex] = getNewCard(1);
+        cardSlots[newCardIndex] = getNewCard(generateRandomNewValue());
         console.log('newCard', newCardIndex, {
           ...cardSlots[newCardIndex],
         });
