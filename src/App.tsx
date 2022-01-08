@@ -78,6 +78,38 @@ function App() {
   };
 
   useEffect(() => {
+    const mergeCardIfPossible = (
+      cardSlots: (ICardInfo | null)[],
+      previousIndex: number,
+      upcomingIndex: number
+    ) => {
+      const previousCard = cardSlots[previousIndex];
+      const upcomingCard = cardSlots[upcomingIndex];
+
+      if (upcomingCard) {
+        if (previousCard) {
+          console.log('merging', { ...previousCard }, { ...upcomingCard });
+
+          if (isMergeable(previousCard, upcomingCard)) {
+            console.log('mergeable??');
+
+            cardSlots[previousIndex] = {
+              ...previousCard,
+              value: previousCard.value + upcomingCard.value,
+            };
+            cardSlots[upcomingIndex] = null;
+          } else {
+            console.log('NO');
+            // do nothing
+          }
+        } else {
+          // console.log('moving', previousCard, upcomingCard);
+          cardSlots[previousIndex] = upcomingCard;
+          cardSlots[upcomingIndex] = null;
+        }
+      }
+    };
+
     const handleKeyUp = (e: KeyboardEvent) => {
       // console.log(e.code);
 
@@ -90,35 +122,7 @@ function App() {
                 const index = row * COL_SIZE + col;
                 const rightIndex = row * COL_SIZE + col + 1;
 
-                const previousCard = newCardSlots[index];
-                const upcomingCard = newCardSlots[rightIndex];
-
-                if (upcomingCard) {
-                  if (previousCard) {
-                    console.log(
-                      'merging',
-                      { ...previousCard },
-                      { ...upcomingCard }
-                    );
-
-                    if (isMergeable(previousCard, upcomingCard)) {
-                      console.log('mergeable??');
-
-                      newCardSlots[index] = {
-                        ...previousCard,
-                        value: previousCard.value + upcomingCard.value,
-                      };
-                      newCardSlots[rightIndex] = null;
-                    } else {
-                      console.log('NO');
-                      // do nothing
-                    }
-                  } else {
-                    // console.log('moving', previousCard, upcomingCard);
-                    newCardSlots[index] = upcomingCard;
-                    newCardSlots[rightIndex] = null;
-                  }
-                }
+                mergeCardIfPossible(newCardSlots, index, rightIndex);
               }
             }
 
@@ -144,32 +148,7 @@ function App() {
                 const index = row * COL_SIZE + col;
                 const leftIndex = row * COL_SIZE + col - 1;
 
-                const previousCard = newCardSlots[index];
-                const upcomingCard = newCardSlots[leftIndex];
-
-                if (upcomingCard) {
-                  if (previousCard) {
-                    console.log(
-                      'merging',
-                      { ...previousCard },
-                      { ...upcomingCard }
-                    );
-
-                    if (isMergeable(previousCard, upcomingCard)) {
-                      newCardSlots[index] = {
-                        ...previousCard,
-                        value: previousCard.value + upcomingCard.value,
-                      };
-                      newCardSlots[leftIndex] = null;
-                    } else {
-                      // do nothing
-                    }
-                  } else {
-                    // console.log('moving', previousCard, upcomingCard);
-                    newCardSlots[index] = upcomingCard;
-                    newCardSlots[leftIndex] = null;
-                  }
-                }
+                mergeCardIfPossible(newCardSlots, index, leftIndex);
               }
             }
 
@@ -193,32 +172,7 @@ function App() {
                 const index = row * COL_SIZE + col;
                 const downIndex = (row + 1) * COL_SIZE + col;
 
-                const previousCard = newCardSlots[index];
-                const upcomingCard = newCardSlots[downIndex];
-
-                if (upcomingCard) {
-                  if (previousCard) {
-                    console.log(
-                      'merging',
-                      { ...previousCard },
-                      { ...upcomingCard }
-                    );
-
-                    if (isMergeable(previousCard, upcomingCard)) {
-                      newCardSlots[index] = {
-                        ...previousCard,
-                        value: previousCard.value + upcomingCard.value,
-                      };
-                      newCardSlots[downIndex] = null;
-                    } else {
-                      // do nothing
-                    }
-                  } else {
-                    // console.log('moving', previousCard, upcomingCard);
-                    newCardSlots[index] = upcomingCard;
-                    newCardSlots[downIndex] = null;
-                  }
-                }
+                mergeCardIfPossible(newCardSlots, index, downIndex);
               }
             }
 
@@ -243,32 +197,7 @@ function App() {
                 const index = row * COL_SIZE + col;
                 const upIndex = (row - 1) * COL_SIZE + col;
 
-                const previousCard = newCardSlots[index];
-                const upcomingCard = newCardSlots[upIndex];
-
-                if (upcomingCard) {
-                  if (previousCard) {
-                    console.log(
-                      'merging',
-                      { ...previousCard },
-                      { ...upcomingCard }
-                    );
-
-                    if (isMergeable(previousCard, upcomingCard)) {
-                      newCardSlots[index] = {
-                        ...previousCard,
-                        value: previousCard.value + upcomingCard.value,
-                      };
-                      newCardSlots[upIndex] = null;
-                    } else {
-                      // do nothing
-                    }
-                  } else {
-                    // console.log('moving', previousCard, upcomingCard);
-                    newCardSlots[index] = upcomingCard;
-                    newCardSlots[upIndex] = null;
-                  }
-                }
+                mergeCardIfPossible(newCardSlots, index, upIndex);
               }
             }
 
