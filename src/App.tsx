@@ -9,6 +9,7 @@ import {
   gridSizeState,
 } from './cardAtom';
 import Grid from './Grid';
+import Modal from './Modal';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -16,10 +17,9 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2em;
-  box-sizing: border-box;
 `;
 const Container = styled.div`
+  margin: 2em;
   background-color: #eee;
   min-width: 300px;
   min-height: 450px;
@@ -344,8 +344,12 @@ function App() {
     return () => document.removeEventListener('keyup', handleKeyUp);
   }, [COL_SIZE, ROW_SIZE, generateRandomColIndex, generateRandomRowIndex]);
 
+  const calculateScore = (): number => {
+    return 0;
+  };
   return (
     <Wrapper>
+      {true && <Modal score={calculateScore()} />}
       <Container>
         <Grid>
           {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
