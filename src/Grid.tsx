@@ -1,7 +1,5 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { gridSizeState } from './cardAtom';
 
 const Container = styled.div`
   display: grid;
@@ -15,10 +13,10 @@ const Container = styled.div`
 
 interface Props {
   children: React.ReactNode;
+  row: number;
+  col: number;
 }
-const Grid = ({ children }: Props) => {
-  const { row, col } = useRecoilValue(gridSizeState);
-
+const Grid = ({ children, row, col }: Props) => {
   return (
     <Container
       style={{

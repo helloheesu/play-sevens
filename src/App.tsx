@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
-import { generateNewCardId } from './cardAtom';
 import Grid from './Grid';
 import Modal from './Modal';
 import gridToLine from './gridToLine';
@@ -38,6 +37,11 @@ const NEW_CARD_VALUES = [1, 1, 1, 2, 2, 2, 3];
 const generateRandomNewValue = () => {
   const randomIndex = Math.floor(Math.random() * NEW_CARD_VALUES.length);
   return NEW_CARD_VALUES[randomIndex];
+};
+
+let newCardId = 0;
+const generateNewCardId = () => {
+  return newCardId++;
 };
 
 function App() {
@@ -393,12 +397,12 @@ function App() {
     <Wrapper>
       {isGameEnded && <Modal score={calculateTotalScore()} />}
       <Container>
-        <Grid>
+        <Grid row={ROW_SIZE} col={COL_SIZE}>
           {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
             <Cell key={i} />
           ))}
         </Grid>
-        <Grid>
+        <Grid row={ROW_SIZE} col={COL_SIZE}>
           {cardSlots.map((card, index) => {
             const { row, col } = getGridIndexFromLineIndex(index);
             return (
