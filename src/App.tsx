@@ -11,6 +11,14 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+`;
+const NewValueDisplay = styled.div`
+  padding: 1em;
+  border-radius: 0.5rem;
+  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px,
+    rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
+    rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 `;
 const Container = styled.div`
   margin: 2em;
@@ -108,32 +116,32 @@ function App() {
           const card = cardSlots[index];
 
           if (!card) {
-            console.log('empty moveable', index);
+            // console.log('empty moveable', index);
 
             return true;
           }
 
           const rightIndex = getRightIndex(row, col);
           if (rightIndex !== null && isMergeable(card, cardSlots[rightIndex])) {
-            console.log('right moveable', row, col);
+            // console.log('right moveable', row, col);
 
             return true;
           }
           const leftIndex = getLeftIndex(row, col);
           if (leftIndex !== null && isMergeable(card, cardSlots[leftIndex])) {
-            console.log('left moveable', row, col);
+            // console.log('left moveable', row, col);
 
             return true;
           }
           const downIndex = getDownIndex(row, col);
           if (downIndex !== null && isMergeable(card, cardSlots[downIndex])) {
-            console.log('down moveable', row, col);
+            // console.log('down moveable', row, col);
 
             return true;
           }
           const upIndex = getUpIndex(row, col);
           if (upIndex !== null && isMergeable(card, cardSlots[upIndex])) {
-            console.log('up moveable', row, col);
+            // console.log('up moveable', row, col);
 
             return true;
           }
@@ -395,6 +403,7 @@ function App() {
   };
   return (
     <Wrapper>
+      <NewValueDisplay>{327}</NewValueDisplay>
       {isGameEnded && <Modal score={calculateTotalScore()} />}
       <Container>
         <Grid row={ROW_SIZE} col={COL_SIZE}>
