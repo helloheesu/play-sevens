@@ -21,8 +21,6 @@ const getColorIndex = (value: number) => {
 
 interface ContainerProps {
   colorIndex: number;
-  row: number;
-  col: number;
 }
 const Container = styled.div<ContainerProps>`
   background-color: pink;
@@ -35,8 +33,6 @@ const Container = styled.div<ContainerProps>`
   font-size: 1.2rem;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   background-color: ${(props) => COLOR_PALETTE[props.colorIndex]};
-  grid-row: ${(props) => `${props.row + 1}/${props.row + 2}`};
-  grid-column: ${(props) => `${props.col + 1}/${props.col + 2}`};
   position: relative;
 
   p {
@@ -51,14 +47,12 @@ const Container = styled.div<ContainerProps>`
 `;
 
 interface Props {
-  row: number;
-  col: number;
   value: number;
   score?: number;
 }
-const Card = ({ row, col, value, score }: Props) => {
+const Card = ({ value, score }: Props) => {
   return (
-    <Container colorIndex={getColorIndex(value)} row={row} col={col} style={{}}>
+    <Container colorIndex={getColorIndex(value)}>
       {typeof score === 'number' && score > 0 && (
         <p className="score">+{score}</p>
       )}

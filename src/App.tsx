@@ -416,13 +416,20 @@ function App() {
             const { row, col } = getGridIndexFromLineIndex(index);
             return (
               card && (
-                <Card
+                <Cell
                   key={card.id}
-                  row={row}
-                  col={col}
-                  value={card.value}
-                  score={!isGameEnded ? undefined : calculateScore(card.value)}
-                />
+                  style={{
+                    gridRow: `${row + 1}/${row + 2}`,
+                    gridColumn: `${col + 1}/${col + 2}`,
+                  }}
+                >
+                  <Card
+                    value={card.value}
+                    score={
+                      !isGameEnded ? undefined : calculateScore(card.value)
+                    }
+                  />
+                </Cell>
               )
             );
           })}
