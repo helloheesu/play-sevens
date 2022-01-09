@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
 import { generateNewCardId } from './cardAtom';
 import Grid from './Grid';
 import Modal from './Modal';
-import useGridToLine from './useGridToLine';
+import gridToLine from './gridToLine';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -53,7 +53,7 @@ function App() {
     getUpIndex,
     getGridIndexFromLineIndex,
     LINE_SIZE,
-  } = useGridToLine(ROW_SIZE, COL_SIZE);
+  } = useMemo(() => gridToLine(ROW_SIZE, COL_SIZE), [ROW_SIZE, COL_SIZE]);
 
   const [cardSlots, setCardSlots] = useState<(ICardInfo | null)[]>([]);
 
