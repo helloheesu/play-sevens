@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
 import Grid from './Grid';
@@ -42,8 +42,9 @@ interface ICardInfo {
 }
 
 const NEW_CARD_VALUES = [1, 1, 1, 2, 2, 2, 3];
-const generateRandomNewValue = () => {
+const _generateRandomNewValue = () => {
   const randomIndex = Math.floor(Math.random() * NEW_CARD_VALUES.length);
+  // console.log('_generate', NEW_CARD_VALUES[randomIndex]);
   return NEW_CARD_VALUES[randomIndex];
 };
 
@@ -67,6 +68,7 @@ function App() {
     LINE_SIZE,
   } = useMemo(() => gridToLine(ROW_SIZE, COL_SIZE), [ROW_SIZE, COL_SIZE]);
 
+  const [nextNewCardValue, setNextNewCardValue] = useState(0);
   const [cardSlots, setCardSlots] = useState<(ICardInfo | null)[]>([]);
 
   const getNewCard = (value: number): ICardInfo | null => {
@@ -78,17 +80,16 @@ function App() {
 
   useEffect(() => {
     const initialCardSlots = new Array(LINE_SIZE);
-    const initialCardInfo = { row: 2, col: 1, value: generateRandomNewValue() };
+    const newValue = _generateRandomNewValue();
+    const initialCardInfo = { row: 2, col: 1, value: newValue };
     initialCardSlots[getIndex(initialCardInfo.row, initialCardInfo.col)] =
       getNewCard(initialCardInfo.value);
 
     setCardSlots(initialCardSlots);
+    setNextNewCardValue(_generateRandomNewValue());
   }, [LINE_SIZE, getIndex]);
 
-  // console.log(
-  //   'log',
-  //   cardSlots.map((card) => ({ ...card }))
-  // );
+  // console.log('log', nextNewCardValue);
 
   const isMergeable = (
     cardA: ICardInfo | null,
@@ -209,7 +210,9 @@ function App() {
         newCardIndex = getNextIndex();
       } while (cardSlots[newCardIndex]);
 
-      cardSlots[newCardIndex] = getNewCard(generateRandomNewValue());
+      const newValue = _generateRandomNewValue();
+      cardSlots[newCardIndex] = getNewCard(nextNewCardValue);
+      setNextNewCardValue(newValue);
       // console.log('newCard', newCardIndex, {
       //   ...cardSlots[newCardIndex],
       // });
@@ -379,6 +382,7 @@ function App() {
     getLeftIndex,
     getRightIndex,
     getUpIndex,
+    nextNewCardValue,
   ]);
 
   const calculateScore = (value: number) => {
@@ -403,7 +407,7 @@ function App() {
   };
   return (
     <Wrapper>
-      <NewValueDisplay>{327}</NewValueDisplay>
+      <NewValueDisplay>{nextNewCardValue}</NewValueDisplay>
       {isGameEnded && <Modal score={calculateTotalScore()} />}
       <Container>
         <Grid row={ROW_SIZE} col={COL_SIZE}>
