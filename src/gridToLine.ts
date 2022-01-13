@@ -56,3 +56,109 @@ export const getUpIndex = (
     ? getIndex((row - 1 + rowSize) % rowSize, col, colSize)
     : null;
 };
+
+export const getLeftMostIndex = (row: number, colSize: number) =>
+  getIndex(row, 0, colSize);
+export const getRightMostIndex = (row: number, colSize: number) =>
+  getIndex(row, colSize - 1, colSize);
+export const getUpMostIndex = (row: number, colSize: number) =>
+  getIndex(row, colSize - 1, colSize);
+export const getDownMostIndex = (row: number, colSize: number) =>
+  getIndex(row, colSize - 1, colSize);
+
+type CompareReducerCallback<S> = (
+  value: S,
+  { index, upcomingIndex }: { index: number; upcomingIndex: number }
+) => S;
+export type CompareReducer<T> = (
+  callback: CompareReducerCallback<T>,
+  initialValue: T
+) => T;
+export const getCompareReducerFromLeft = <R>(
+  rowSize: number,
+  colSize: number
+): CompareReducer<R> => {
+  return (callback, initialValue) => {
+    let value = initialValue;
+
+    for (let row = 0; row <= rowSize - 1; row++) {
+      for (let col = 0; col <= colSize - 1; col++) {
+        const index = getIndex(row, col, colSize);
+        const upcomingIndex = getRightIndex(index, rowSize, colSize, false);
+        if (upcomingIndex === null) {
+          continue;
+        }
+
+        value = callback(value, { index, upcomingIndex });
+      }
+    }
+
+    return value;
+  };
+};
+export const getCompareReducerFromRight = <R>(
+  rowSize: number,
+  colSize: number
+): CompareReducer<R> => {
+  return (callback, initialValue) => {
+    let value = initialValue;
+
+    for (let row = 0; row <= rowSize - 1; row++) {
+      for (let col = colSize - 1; col >= 0; col--) {
+        const index = getIndex(row, col, colSize);
+        const upcomingIndex = getLeftIndex(index, rowSize, colSize, false);
+        if (upcomingIndex === null) {
+          continue;
+        }
+
+        value = callback(value, { index, upcomingIndex });
+      }
+    }
+
+    return value;
+  };
+};
+export const getCompareReducerFromUp = <R>(
+  rowSize: number,
+  colSize: number
+): CompareReducer<R> => {
+  return (callback, initialValue) => {
+    let value = initialValue;
+
+    for (let row = 0; row <= rowSize - 1; row++) {
+      for (let col = 0; col <= colSize - 1; col++) {
+        const index = getIndex(row, col, colSize);
+        const upcomingIndex = getDownIndex(index, rowSize, colSize, false);
+        if (upcomingIndex === null) {
+          continue;
+        }
+
+        value = callback(value, { index, upcomingIndex });
+      }
+    }
+
+    return value;
+  };
+};
+export const getCompareReducerFromDown = <R>(
+  rowSize: number,
+  colSize: number
+): CompareReducer<R> => {
+  return (callback, initialValue) => {
+    let value = initialValue;
+
+    for (let row = rowSize - 1; row >= 0; row--) {
+      for (let col = 0; col <= colSize - 1; col++) {
+        const index = getIndex(row, col, colSize);
+        const upcomingIndex = getUpIndex(index, rowSize, colSize, false);
+        if (upcomingIndex === null) {
+          continue;
+        }
+
+        value = callback(value, { index, upcomingIndex });
+      }
+    }
+
+    return value;
+  };
+};
