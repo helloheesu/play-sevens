@@ -89,13 +89,12 @@ const mergeCardIfPossible = (
 };
 const isAnyMoveable = (
   cardSlots: CardSlot[],
-  ROW_SIZE: number,
-  COL_SIZE: number
+  rowSize: number,
+  colSize: number
 ): boolean => {
-  for (let row = 0; row < ROW_SIZE; row++) {
-    for (let col = 0; col < COL_SIZE; col++) {
-      const payload = { row, col, rowSize: ROW_SIZE, colSize: COL_SIZE };
-      const index = getIndex(payload);
+  for (let row = 0; row < rowSize; row++) {
+    for (let col = 0; col < colSize; col++) {
+      const index = getIndex(row, col, colSize);
       const card = cardSlots[index];
 
       if (!card) {
@@ -104,25 +103,25 @@ const isAnyMoveable = (
         return true;
       }
 
-      const rightIndex = getRightIndex(payload);
+      const rightIndex = getRightIndex(row, col, colSize);
       if (rightIndex !== null && isMergeable(card, cardSlots[rightIndex])) {
         // console.log('right moveable', row, col);
 
         return true;
       }
-      const leftIndex = getLeftIndex(payload);
+      const leftIndex = getLeftIndex(row, col, colSize);
       if (leftIndex !== null && isMergeable(card, cardSlots[leftIndex])) {
         // console.log('left moveable', row, col);
 
         return true;
       }
-      const downIndex = getDownIndex(payload);
+      const downIndex = getDownIndex(row, col, rowSize, colSize);
       if (downIndex !== null && isMergeable(card, cardSlots[downIndex])) {
         // console.log('down moveable', row, col);
 
         return true;
       }
-      const upIndex = getUpIndex(payload);
+      const upIndex = getUpIndex(row, col, rowSize, colSize);
       if (upIndex !== null && isMergeable(card, cardSlots[upIndex])) {
         // console.log('up moveable', row, col);
 
@@ -140,12 +139,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       const newValue = pickRandomValue(state.newCardValues);
       const initialCardInfo = { row: 2, col: 1, value: newValue };
       initialCardSlots[
-        getIndex({
-          row: initialCardInfo.row,
-          col: initialCardInfo.col,
-          rowSize: state.rowSize,
-          colSize: state.colSize,
-        })
+        getIndex(initialCardInfo.row, initialCardInfo.col, state.colSize)
       ] = getNewCard(initialCardInfo.value);
 
       return {
@@ -160,14 +154,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       for (let col = 0; col <= state.colSize - 1; col++) {
         for (let row = 0; row <= state.rowSize - 1; row++) {
-          const payload = {
-            row,
-            col,
-            rowSize: state.rowSize,
-            colSize: state.colSize,
-          };
-          const index = getIndex(payload);
-          const rightIndex = getRightIndex(payload);
+          const index = getIndex(row, col, state.colSize);
+          const rightIndex = getRightIndex(row, col, state.colSize);
           if (rightIndex === null) {
             continue;
           }
@@ -211,14 +199,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       for (let col = state.colSize - 1; col >= 0; col--) {
         for (let row = 0; row <= state.rowSize - 1; row++) {
-          const payload = {
-            row,
-            col,
-            rowSize: state.rowSize,
-            colSize: state.colSize,
-          };
-          const index = getIndex(payload);
-          const leftIndex = getLeftIndex(payload);
+          const index = getIndex(row, col, state.colSize);
+          const leftIndex = getLeftIndex(row, col, state.colSize);
           if (leftIndex === null) {
             continue;
           }
@@ -262,14 +244,13 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       for (let row = 0; row <= state.rowSize - 1; row++) {
         for (let col = 0; col <= state.colSize - 1; col++) {
-          const payload = {
+          const index = getIndex(row, col, state.colSize);
+          const downIndex = getDownIndex(
             row,
             col,
-            rowSize: state.rowSize,
-            colSize: state.colSize,
-          };
-          const index = getIndex(payload);
-          const downIndex = getDownIndex(payload);
+            state.rowSize,
+            state.colSize
+          );
           if (downIndex === null) {
             continue;
           }
@@ -313,14 +294,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       for (let row = state.rowSize - 1; row >= 0; row--) {
         for (let col = 0; col <= state.colSize - 1; col++) {
-          const payload = {
-            row,
-            col,
-            rowSize: state.rowSize,
-            colSize: state.colSize,
-          };
-          const index = getIndex(payload);
-          const upIndex = getUpIndex(payload);
+          const index = getIndex(row, col, state.colSize);
+          const upIndex = getUpIndex(row, col, state.rowSize, state.colSize);
           if (upIndex === null) {
             continue;
           }
