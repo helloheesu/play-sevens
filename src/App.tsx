@@ -53,25 +53,19 @@ function App() {
 
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
-      // console.log(e.code);
-
       switch (e.code) {
         case 'ArrowLeft':
-          dispatch({ type: 'mergeLeft' });
+          dispatch({ type: 'merge', direction: 'left' });
           break;
-
         case 'ArrowRight':
-          dispatch({ type: 'mergeRight' });
+          dispatch({ type: 'merge', direction: 'right' });
           break;
-
         case 'ArrowUp':
-          dispatch({ type: 'mergeUp' });
+          dispatch({ type: 'merge', direction: 'up' });
           break;
-
         case 'ArrowDown':
-          dispatch({ type: 'mergeDown' });
+          dispatch({ type: 'merge', direction: 'down' });
           break;
-
         default:
           break;
       }

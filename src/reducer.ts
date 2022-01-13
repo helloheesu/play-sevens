@@ -1,7 +1,12 @@
 import { Reducer } from 'react';
 import {
+  CompareReducer,
   generateRandomColIndex,
   generateRandomRowIndex,
+  getCompareReducerFromDown,
+  getCompareReducerFromLeft,
+  getCompareReducerFromRight,
+  getCompareReducerFromUp,
   getDownIndex,
   getIndex,
   getLeftIndex,
@@ -25,9 +30,17 @@ interface State {
   isGameEnded: boolean;
 }
 
-type Action = {
-  type: 'resetCardSlots' | 'mergeLeft' | 'mergeRight' | 'mergeUp' | 'mergeDown';
-};
+type Direction = 'left' | 'right' | 'up' | 'down';
+type Action =
+  | {
+      type:
+        | 'resetCardSlots'
+        | 'mergeLeft'
+        | 'mergeRight'
+        | 'mergeUp'
+        | 'mergeDown';
+    }
+  | { type: 'merge'; direction: Direction };
 
 const pickRandomValue = (values: number[]) => {
   const randomIndex = Math.floor(Math.random() * values.length);
@@ -141,40 +154,117 @@ const reducer: Reducer<State, Action> = (state, action) => {
         nextNewCardValue: pickRandomValue(state.newCardValues),
       };
     }
-    case 'mergeLeft': {
+    case 'merge': {
       const newCardSlots = [...state.cardSlots];
-      let hasAnyMoved = false;
+      let compareReduce: CompareReducer<boolean>,
+        getNewCardIndex: (cardSlots: CardSlot[]) => number;
+      switch (action.direction) {
+        case 'left':
+          compareReduce = getCompareReducerFromLeft(
+            state.rowSize,
+            state.colSize
+          );
+          getNewCardIndex = (cardSlots) => {
+            let row = generateRandomRowIndex(state.rowSize);
+            const col = state.colSize - 1;
 
-      for (let col = 0; col <= state.colSize - 1; col++) {
-        for (let row = 0; row <= state.rowSize - 1; row++) {
-          const index = getIndex(row, col, state.colSize);
-          const rightIndex = getRightIndex(index, state.rowSize, state.colSize);
-          if (rightIndex === null) {
-            continue;
-          }
+            let newCardIndex = getIndex(row, col, state.colSize);
+            while (cardSlots[newCardIndex]) {
+              newCardIndex = getDownIndex(
+                newCardIndex,
+                state.rowSize,
+                state.colSize,
+                true
+              )!;
+            }
 
-          const hasMoved = mergeCardIfPossible(newCardSlots, index, rightIndex);
-          hasAnyMoved = hasAnyMoved || hasMoved;
-        }
+            return newCardIndex;
+          };
+          break;
+        case 'right':
+          compareReduce = getCompareReducerFromRight(
+            state.rowSize,
+            state.colSize
+          );
+          getNewCardIndex = (cardSlots) => {
+            let row = generateRandomRowIndex(state.rowSize);
+            const col = 0;
+
+            let newCardIndex = getIndex(row, col, state.colSize);
+            while (cardSlots[newCardIndex]) {
+              newCardIndex = getDownIndex(
+                newCardIndex,
+                state.rowSize,
+                state.colSize,
+                true
+              )!;
+            }
+
+            return newCardIndex;
+          };
+          break;
+        case 'up':
+          compareReduce = getCompareReducerFromUp(state.rowSize, state.colSize);
+          getNewCardIndex = (cardSlots) => {
+            let col = generateRandomColIndex(state.colSize);
+            const row = state.rowSize - 1;
+
+            let newCardIndex = getIndex(row, col, state.colSize);
+            while (cardSlots[newCardIndex]) {
+              newCardIndex = getRightIndex(
+                newCardIndex,
+                state.rowSize,
+                state.colSize,
+                true
+              )!;
+            }
+
+            return newCardIndex;
+          };
+          break;
+        case 'down':
+          compareReduce = getCompareReducerFromDown(
+            state.rowSize,
+            state.colSize
+          );
+          getNewCardIndex = (cardSlots) => {
+            let col = generateRandomColIndex(state.colSize);
+            const row = 0;
+
+            let newCardIndex = getIndex(row, col, state.colSize);
+            while (cardSlots[newCardIndex]) {
+              newCardIndex = getRightIndex(
+                newCardIndex,
+                state.rowSize,
+                state.colSize,
+                true
+              )!;
+            }
+
+            return newCardIndex;
+          };
+          break;
+        default:
+          return state;
       }
 
-      let newValue = state.nextNewCardValue;
+      const hasAnyMoved = compareReduce(
+        (hasAnyMoved, { index, upcomingIndex }) => {
+          const hasMoved = mergeCardIfPossible(
+            newCardSlots,
+            index,
+            upcomingIndex
+          );
+          return hasAnyMoved || hasMoved;
+        },
+        false
+      );
+
+      let nextNewCardValue = state.nextNewCardValue;
       if (hasAnyMoved) {
-        let row = generateRandomRowIndex(state.rowSize);
-        const col = state.colSize - 1;
-
-        let newCardIndex = getIndex(row, col, state.colSize);
-        while (newCardSlots[newCardIndex]) {
-          newCardIndex = getDownIndex(
-            newCardIndex,
-            state.rowSize,
-            state.colSize,
-            true
-          )!;
-        }
-
-        newValue = pickRandomValue(state.newCardValues);
+        const newCardIndex = getNewCardIndex(newCardSlots);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
+        nextNewCardValue = pickRandomValue(state.newCardValues);
       }
 
       const isGameEnded =
@@ -183,145 +273,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         cardSlots: newCardSlots,
-        nextNewCardValue: newValue,
-        isGameEnded,
-      };
-    }
-    case 'mergeRight': {
-      const newCardSlots = [...state.cardSlots];
-      let hasAnyMoved = false;
-
-      for (let col = state.colSize - 1; col >= 0; col--) {
-        for (let row = 0; row <= state.rowSize - 1; row++) {
-          const index = getIndex(row, col, state.colSize);
-          const leftIndex = getLeftIndex(index, state.rowSize, state.colSize);
-          if (leftIndex === null) {
-            continue;
-          }
-
-          const hasMoved = mergeCardIfPossible(newCardSlots, index, leftIndex);
-          hasAnyMoved = hasAnyMoved || hasMoved;
-        }
-      }
-
-      let newValue = state.nextNewCardValue;
-      if (hasAnyMoved) {
-        let row = generateRandomRowIndex(state.rowSize);
-        const col = 0;
-
-        let newCardIndex = getIndex(row, col, state.colSize);
-        while (newCardSlots[newCardIndex]) {
-          newCardIndex = getDownIndex(
-            newCardIndex,
-            state.rowSize,
-            state.colSize,
-            true
-          )!;
-        }
-
-        newValue = pickRandomValue(state.newCardValues);
-        newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-      }
-
-      const isGameEnded =
-        isAnyMoveable(newCardSlots, state.rowSize, state.colSize) === false;
-
-      return {
-        ...state,
-        cardSlots: newCardSlots,
-        nextNewCardValue: newValue,
-        isGameEnded,
-      };
-    }
-    case 'mergeUp': {
-      const newCardSlots = [...state.cardSlots];
-      let hasAnyMoved = false;
-
-      for (let row = 0; row <= state.rowSize - 1; row++) {
-        for (let col = 0; col <= state.colSize - 1; col++) {
-          const index = getIndex(row, col, state.colSize);
-          const downIndex = getDownIndex(index, state.rowSize, state.colSize);
-          if (downIndex === null) {
-            continue;
-          }
-
-          const hasMoved = mergeCardIfPossible(newCardSlots, index, downIndex);
-          hasAnyMoved = hasAnyMoved || hasMoved;
-        }
-      }
-
-      let newValue = state.nextNewCardValue;
-      if (hasAnyMoved) {
-        let col = generateRandomColIndex(state.colSize);
-        const row = state.rowSize - 1;
-
-        let newCardIndex = getIndex(row, col, state.colSize);
-        while (newCardSlots[newCardIndex]) {
-          newCardIndex = getRightIndex(
-            newCardIndex,
-            state.rowSize,
-            state.colSize,
-            true
-          )!;
-        }
-
-        newValue = pickRandomValue(state.newCardValues);
-        newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-      }
-
-      const isGameEnded =
-        isAnyMoveable(newCardSlots, state.rowSize, state.colSize) === false;
-
-      return {
-        ...state,
-        cardSlots: newCardSlots,
-        nextNewCardValue: newValue,
-        isGameEnded,
-      };
-    }
-    case 'mergeDown': {
-      const newCardSlots = [...state.cardSlots];
-      let hasAnyMoved = false;
-
-      for (let row = state.rowSize - 1; row >= 0; row--) {
-        for (let col = 0; col <= state.colSize - 1; col++) {
-          const index = getIndex(row, col, state.colSize);
-          const upIndex = getUpIndex(index, state.rowSize, state.colSize);
-          if (upIndex === null) {
-            continue;
-          }
-
-          const hasMoved = mergeCardIfPossible(newCardSlots, index, upIndex);
-          hasAnyMoved = hasAnyMoved || hasMoved;
-        }
-      }
-
-      let newValue = state.nextNewCardValue;
-      if (hasAnyMoved) {
-        let col = generateRandomColIndex(state.colSize);
-        const row = 0;
-
-        let newCardIndex = getIndex(row, col, state.colSize);
-        while (newCardSlots[newCardIndex]) {
-          newCardIndex = getRightIndex(
-            newCardIndex,
-            state.rowSize,
-            state.colSize,
-            true
-          )!;
-        }
-
-        newValue = pickRandomValue(state.newCardValues);
-        newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-      }
-
-      const isGameEnded =
-        isAnyMoveable(newCardSlots, state.rowSize, state.colSize) === false;
-
-      return {
-        ...state,
-        cardSlots: newCardSlots,
-        nextNewCardValue: newValue,
+        nextNewCardValue,
         isGameEnded,
       };
     }
