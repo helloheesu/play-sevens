@@ -98,33 +98,26 @@ const isAnyMoveable = (
       const card = cardSlots[index];
 
       if (!card) {
-        // console.log('empty moveable', index);
-
         return true;
       }
 
-      const rightIndex = getRightIndex(row, col, colSize);
+      const rightIndex = getRightIndex(index, rowSize, colSize);
       if (rightIndex !== null && isMergeable(card, cardSlots[rightIndex])) {
-        // console.log('right moveable', row, col);
-
         return true;
       }
-      const leftIndex = getLeftIndex(row, col, colSize);
+
+      const leftIndex = getLeftIndex(index, rowSize, colSize);
       if (leftIndex !== null && isMergeable(card, cardSlots[leftIndex])) {
-        // console.log('left moveable', row, col);
-
         return true;
       }
-      const downIndex = getDownIndex(row, col, rowSize, colSize);
+
+      const downIndex = getDownIndex(index, rowSize, colSize);
       if (downIndex !== null && isMergeable(card, cardSlots[downIndex])) {
-        // console.log('down moveable', row, col);
-
         return true;
       }
-      const upIndex = getUpIndex(row, col, rowSize, colSize);
-      if (upIndex !== null && isMergeable(card, cardSlots[upIndex])) {
-        // console.log('up moveable', row, col);
 
+      const upIndex = getUpIndex(index, rowSize, colSize);
+      if (upIndex !== null && isMergeable(card, cardSlots[upIndex])) {
         return true;
       }
     }
@@ -155,7 +148,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       for (let col = 0; col <= state.colSize - 1; col++) {
         for (let row = 0; row <= state.rowSize - 1; row++) {
           const index = getIndex(row, col, state.colSize);
-          const rightIndex = getRightIndex(row, col, state.colSize);
+          const rightIndex = getRightIndex(index, state.rowSize, state.colSize);
           if (rightIndex === null) {
             continue;
           }
@@ -200,7 +193,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       for (let col = state.colSize - 1; col >= 0; col--) {
         for (let row = 0; row <= state.rowSize - 1; row++) {
           const index = getIndex(row, col, state.colSize);
-          const leftIndex = getLeftIndex(row, col, state.colSize);
+          const leftIndex = getLeftIndex(index, state.rowSize, state.colSize);
           if (leftIndex === null) {
             continue;
           }
@@ -245,12 +238,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       for (let row = 0; row <= state.rowSize - 1; row++) {
         for (let col = 0; col <= state.colSize - 1; col++) {
           const index = getIndex(row, col, state.colSize);
-          const downIndex = getDownIndex(
-            row,
-            col,
-            state.rowSize,
-            state.colSize
-          );
+          const downIndex = getDownIndex(index, state.rowSize, state.colSize);
           if (downIndex === null) {
             continue;
           }
@@ -295,7 +283,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       for (let row = state.rowSize - 1; row >= 0; row--) {
         for (let col = 0; col <= state.colSize - 1; col++) {
           const index = getIndex(row, col, state.colSize);
-          const upIndex = getUpIndex(row, col, state.rowSize, state.colSize);
+          const upIndex = getUpIndex(index, state.rowSize, state.colSize);
           if (upIndex === null) {
             continue;
           }
