@@ -21,7 +21,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "preview-to-live": "firebase hosting:clone threes-clone:preview threes-clone:live"
   },
   "eslintConfig": {
     "extends": [
