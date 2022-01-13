@@ -5,21 +5,47 @@ export const generateRandomColIndex = (colSize: number) => {
   return Math.floor(Math.random() * colSize);
 };
 
-interface Payload {
-  row: number;
-  col: number;
-  rowSize: number;
-  colSize: number;
-}
-export const getIndex = ({ row, col, colSize }: Payload) => row * colSize + col;
-export const getRightIndex = ({ row, col, colSize }: Payload) =>
-  col > colSize - 2 ? null : row * colSize + col + 1;
-export const getLeftIndex = ({ row, col, colSize }: Payload) =>
-  col < 1 ? null : row * colSize + col - 1;
-export const getDownIndex = ({ row, col, rowSize, colSize }: Payload) =>
-  row > rowSize - 2 ? null : (row + 1) * colSize + col;
-export const getUpIndex = ({ row, col, colSize }: Payload) =>
-  row < 1 ? null : (row - 1) * colSize + col;
+export const getIndex = (row: number, col: number, colSize: number) =>
+  row * colSize + col;
+
+export const getRightIndex = (
+  row: number,
+  col: number,
+  colSize: number,
+  circular: boolean = false
+) =>
+  circular || col <= colSize - 2
+    ? getIndex(row, (col + 1) % colSize, colSize)
+    : null;
+export const getLeftIndex = (
+  row: number,
+  col: number,
+  colSize: number,
+  circular: boolean = false
+) =>
+  circular || col >= 1
+    ? getIndex(row, (col - 1 + colSize) % colSize, colSize)
+    : null;
+export const getDownIndex = (
+  row: number,
+  col: number,
+  rowSize: number,
+  colSize: number,
+  circular: boolean = false
+) =>
+  circular || row <= rowSize - 2
+    ? getIndex((row + 1) % rowSize, col, colSize)
+    : null;
+export const getUpIndex = (
+  row: number,
+  col: number,
+  rowSize: number,
+  colSize: number,
+  circular: boolean = false
+) =>
+  circular || row >= 1
+    ? getIndex((row - 1 + rowSize) % rowSize, col, colSize)
+    : null;
 
 export const getGridIndexFromLineIndex = (index: number, colSize: number) => ({
   row: Math.floor(index / colSize),
