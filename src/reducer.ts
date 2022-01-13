@@ -160,17 +160,18 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       let newValue = state.nextNewCardValue;
       if (hasAnyMoved) {
-        let rowIndex = generateRandomRowIndex(state.rowSize);
-        const getNextIndex = () => {
-          const newCardIndex = rowIndex * state.colSize + state.colSize - 1;
-          rowIndex = (rowIndex + 1) % state.rowSize;
-          return newCardIndex;
-        };
+        let row = generateRandomRowIndex(state.rowSize);
+        const col = state.colSize - 1;
 
-        let newCardIndex;
-        do {
-          newCardIndex = getNextIndex();
-        } while (newCardSlots[newCardIndex]);
+        let newCardIndex = getIndex(row, col, state.colSize);
+        while (newCardSlots[newCardIndex]) {
+          newCardIndex = getDownIndex(
+            newCardIndex,
+            state.rowSize,
+            state.colSize,
+            true
+          )!;
+        }
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
@@ -205,17 +206,18 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       let newValue = state.nextNewCardValue;
       if (hasAnyMoved) {
-        let rowIndex = generateRandomRowIndex(state.rowSize);
-        const getNextIndex = () => {
-          const newCardIndex = rowIndex * state.colSize + 0;
-          rowIndex = (rowIndex + 1) % state.rowSize;
-          return newCardIndex;
-        };
+        let row = generateRandomRowIndex(state.rowSize);
+        const col = 0;
 
-        let newCardIndex;
-        do {
-          newCardIndex = getNextIndex();
-        } while (newCardSlots[newCardIndex]);
+        let newCardIndex = getIndex(row, col, state.colSize);
+        while (newCardSlots[newCardIndex]) {
+          newCardIndex = getDownIndex(
+            newCardIndex,
+            state.rowSize,
+            state.colSize,
+            true
+          )!;
+        }
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
@@ -250,17 +252,18 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       let newValue = state.nextNewCardValue;
       if (hasAnyMoved) {
-        let colIndex = generateRandomColIndex(state.colSize);
-        const getNextIndex = () => {
-          const newCardIndex = (state.rowSize - 1) * state.colSize + colIndex;
-          colIndex = (colIndex + 1) % state.colSize;
-          return newCardIndex;
-        };
+        let col = generateRandomColIndex(state.colSize);
+        const row = state.rowSize - 1;
 
-        let newCardIndex;
-        do {
-          newCardIndex = getNextIndex();
-        } while (newCardSlots[newCardIndex]);
+        let newCardIndex = getIndex(row, col, state.colSize);
+        while (newCardSlots[newCardIndex]) {
+          newCardIndex = getRightIndex(
+            newCardIndex,
+            state.rowSize,
+            state.colSize,
+            true
+          )!;
+        }
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
@@ -295,17 +298,18 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
       let newValue = state.nextNewCardValue;
       if (hasAnyMoved) {
-        let colIndex = generateRandomColIndex(state.colSize);
-        const getNextIndex = () => {
-          const newCardIndex = 0 * state.colSize + colIndex;
-          colIndex = (colIndex + 1) % state.colSize;
-          return newCardIndex;
-        };
+        let col = generateRandomColIndex(state.colSize);
+        const row = 0;
 
-        let newCardIndex;
-        do {
-          newCardIndex = getNextIndex();
-        } while (newCardSlots[newCardIndex]);
+        let newCardIndex = getIndex(row, col, state.colSize);
+        while (newCardSlots[newCardIndex]) {
+          newCardIndex = getRightIndex(
+            newCardIndex,
+            state.rowSize,
+            state.colSize,
+            true
+          )!;
+        }
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
