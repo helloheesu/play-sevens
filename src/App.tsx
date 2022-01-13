@@ -1,10 +1,10 @@
 import { useEffect, useReducer } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
-import Grid from './Grid';
 import Modal from './Modal';
 import reducer from './reducer';
 import { getGridIndexFromLineIndex } from './gridToLine';
+import defaultTheme from './theme';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -14,27 +14,24 @@ const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
 `;
-const NewValueDisplay = styled.div`
-  padding: 1em;
-  border-radius: 0.5rem;
-  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px,
-    rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
-    rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-`;
 const Container = styled.div`
   margin: 2em;
-  background-color: #eee;
-  min-width: 300px;
-  min-height: 450px;
-  max-width: 900px;
-  max-height: 1350px;
-  height: 80%;
-  width: 80%;
+  background-color: ${(props) => props.theme.background.main};
   position: relative;
 `;
 
+const Grid = styled.div<{ row: number; col: number }>`
+  display: grid;
+  padding: 1em;
+  gap: 1em;
+  box-sizing: border-box;
+  grid-template: ${(props) =>
+    `repeat(${props.row}, 1fr) / repeat(${props.col}, 1fr)`};
+`;
 const Cell = styled.div`
-  background-color: darkgray;
+  background-color: ${(props) => props.theme.background.darken};
+  width: 3rem;
+  height: 4rem;
 `;
 
 function App() {
@@ -105,42 +102,46 @@ function App() {
     return totalScore;
   };
   return (
-    <Wrapper>
-      <NewValueDisplay>{state.nextNewCardValue}</NewValueDisplay>
-      {state.isGameEnded && <Modal score={calculateTotalScore()} />}
-      <Container>
-        <Grid row={ROW_SIZE} col={COL_SIZE}>
-          {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
-            <Cell key={i} />
-          ))}
-        </Grid>
-        <Grid row={ROW_SIZE} col={COL_SIZE}>
-          {state.cardSlots.map((card, index) => {
-            const { row, col } = getGridIndexFromLineIndex(index, COL_SIZE);
-            return (
-              card && (
-                <Cell
-                  key={card.id}
-                  style={{
-                    gridRow: `${row + 1}/${row + 2}`,
-                    gridColumn: `${col + 1}/${col + 2}`,
-                  }}
-                >
-                  <Card
-                    value={card.value}
-                    score={
-                      !state.isGameEnded
-                        ? undefined
-                        : calculateScore(card.value)
-                    }
-                  />
-                </Cell>
-              )
-            );
-          })}
-        </Grid>
-      </Container>
-    </Wrapper>
+    <ThemeProvider theme={defaultTheme}>
+      <Wrapper>
+        <Cell style={{ transform: 'scale(0.7)' }}>
+          <Card value={state.nextNewCardValue} />
+        </Cell>
+        {state.isGameEnded && <Modal score={calculateTotalScore()} />}
+        <Container>
+          <Grid row={ROW_SIZE} col={COL_SIZE} style={{ position: 'absolute' }}>
+            {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
+              <Cell key={i} />
+            ))}
+          </Grid>
+          <Grid row={ROW_SIZE} col={COL_SIZE}>
+            {state.cardSlots.map((card, index) => {
+              const { row, col } = getGridIndexFromLineIndex(index, COL_SIZE);
+              return (
+                card && (
+                  <Cell
+                    key={card.id}
+                    style={{
+                      gridRow: `${row + 1}/${row + 2}`,
+                      gridColumn: `${col + 1}/${col + 2}`,
+                    }}
+                  >
+                    <Card
+                      value={card.value}
+                      score={
+                        !state.isGameEnded
+                          ? undefined
+                          : calculateScore(card.value)
+                      }
+                    />
+                  </Cell>
+                )
+              );
+            })}
+          </Grid>
+        </Container>
+      </Wrapper>
+    </ThemeProvider>
   );
 }
 
