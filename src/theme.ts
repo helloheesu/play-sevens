@@ -25,7 +25,7 @@ const defaultTheme: Theme = {
     darken: '#333090',
   },
   [Colors.white]: {
-    main: '#fff',
+    main: '#ffffff',
     darken: '#f1cd88',
   },
   [Colors.black]: {
@@ -34,7 +34,7 @@ const defaultTheme: Theme = {
   },
   [Colors.background]: {
     main: '#eee',
-    darken: 'darkgray',
+    darken: '#a9a9a9',
   },
 };
 
