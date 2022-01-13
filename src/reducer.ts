@@ -295,11 +295,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-        return {
-          ...state,
-          nextNewCardValue: newValue,
-          cardSlots: newCardSlots,
-        };
       }
 
       const isGameEnded =
@@ -351,11 +346,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
         newValue = pickRandomValue(state.newCardValues);
         newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-        return {
-          ...state,
-          nextNewCardValue: newValue,
-          cardSlots: newCardSlots,
-        };
       }
 
       const isGameEnded =
