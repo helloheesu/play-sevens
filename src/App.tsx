@@ -5,10 +5,11 @@ import Modal from './Modal';
 import reducer from './reducer';
 import { getGridIndexFromLineIndex } from './gridToLine';
 import defaultTheme from './theme';
+import ArrowButtonsLayer from './ArrowButtonsLayer';
 
 const Wrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,20 +52,25 @@ function App() {
     dispatch({ type: 'resetCardSlots' });
   }, []);
 
+  const onLeft = () => dispatch({ type: 'merge', direction: 'left' });
+  const onRight = () => dispatch({ type: 'merge', direction: 'right' });
+  const onUp = () => dispatch({ type: 'merge', direction: 'up' });
+  const onDown = () => dispatch({ type: 'merge', direction: 'down' });
+
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
         case 'ArrowLeft':
-          dispatch({ type: 'merge', direction: 'left' });
+          onLeft();
           break;
         case 'ArrowRight':
-          dispatch({ type: 'merge', direction: 'right' });
+          onRight();
           break;
         case 'ArrowUp':
-          dispatch({ type: 'merge', direction: 'up' });
+          onUp();
           break;
         case 'ArrowDown':
-          dispatch({ type: 'merge', direction: 'down' });
+          onDown();
           break;
         default:
           break;
@@ -97,44 +103,55 @@ function App() {
   };
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Wrapper>
-        <Cell style={{ transform: 'scale(0.7)' }}>
-          <Card value={state.nextNewCardValue} />
-        </Cell>
-        {state.isGameEnded && <Modal score={calculateTotalScore()} />}
-        <Container>
-          <Grid row={ROW_SIZE} col={COL_SIZE} style={{ position: 'absolute' }}>
-            {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
-              <Cell key={i} />
-            ))}
-          </Grid>
-          <Grid row={ROW_SIZE} col={COL_SIZE}>
-            {state.cardSlots.map((card, index) => {
-              const { row, col } = getGridIndexFromLineIndex(index, COL_SIZE);
-              return (
-                card && (
-                  <Cell
-                    key={card.id}
-                    style={{
-                      gridRow: `${row + 1}/${row + 2}`,
-                      gridColumn: `${col + 1}/${col + 2}`,
-                    }}
-                  >
-                    <Card
-                      value={card.value}
-                      score={
-                        !state.isGameEnded
-                          ? undefined
-                          : calculateScore(card.value)
-                      }
-                    />
-                  </Cell>
-                )
-              );
-            })}
-          </Grid>
-        </Container>
-      </Wrapper>
+      <ArrowButtonsLayer
+        onDown={onDown}
+        onLeft={onLeft}
+        onRight={onRight}
+        onUp={onUp}
+      >
+        <Wrapper>
+          <Cell style={{ transform: 'scale(0.7)' }}>
+            <Card value={state.nextNewCardValue} />
+          </Cell>
+          {state.isGameEnded && <Modal score={calculateTotalScore()} />}
+          <Container>
+            <Grid
+              row={ROW_SIZE}
+              col={COL_SIZE}
+              style={{ position: 'absolute' }}
+            >
+              {Array.apply(null, Array(ROW_SIZE * COL_SIZE)).map((_, i) => (
+                <Cell key={i} />
+              ))}
+            </Grid>
+            <Grid row={ROW_SIZE} col={COL_SIZE}>
+              {state.cardSlots.map((card, index) => {
+                const { row, col } = getGridIndexFromLineIndex(index, COL_SIZE);
+                return (
+                  card && (
+                    <Cell
+                      key={card.id}
+                      style={{
+                        gridRow: `${row + 1}/${row + 2}`,
+                        gridColumn: `${col + 1}/${col + 2}`,
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        score={
+                          !state.isGameEnded
+                            ? undefined
+                            : calculateScore(card.value)
+                        }
+                      />
+                    </Cell>
+                  )
+                );
+              })}
+            </Grid>
+          </Container>
+        </Wrapper>
+      </ArrowButtonsLayer>
     </ThemeProvider>
   );
 }
