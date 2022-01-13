@@ -1,48 +1,49 @@
 import styled from 'styled-components';
+import { ColorKeys, Colors } from './theme';
 
-const COLOR_PALETTE = [
-  // https://colorhunt.co/palette/d9d7f1fffddee7fbbeffcbcb
-  '#FFCBCB',
-  '#E7FBBE',
-  '#FFFDDE',
-  '#D9D7F1',
-];
-
-const getColorIndex = (value: number) => {
+const getColors = (value: number) => {
   switch (value) {
     case 1:
-      return 0;
+      return { colorName: Colors.red, fontColor: Colors.white };
     case 2:
-      return 1;
+      return { colorName: Colors.blue, fontColor: Colors.white };
     default:
-      return 2;
+      return { colorName: Colors.white, fontColor: Colors.black };
   }
 };
 
 interface ContainerProps {
-  colorIndex: number;
+  colorName: ColorKeys;
+  fontColor: ColorKeys;
 }
 const Container = styled.div<ContainerProps>`
-  background-color: pink;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-size: 1.2rem;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  background-color: ${(props) => COLOR_PALETTE[props.colorIndex]};
-  position: relative;
 
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+
+  position: relative;
+  top: -0.1em;
+  border-radius: 0.3rem;
+  background-color: ${(props) => props.theme[props.colorName].main};
+  box-shadow: 0 0.3rem 0 0 ${(props) => props.theme[props.colorName].darken};
   p {
     margin: 0;
   }
   .score {
-    font-size: 0.7em;
+    font-size: 0.5em;
     color: darkgray;
     position: absolute;
-    top: 20%;
+    top: 5%;
+  }
+  .value {
+    color: ${(props) => props.theme[props.fontColor].main};
   }
 `;
 
@@ -51,8 +52,9 @@ interface Props {
   score?: number;
 }
 const Card = ({ value, score }: Props) => {
+  const { colorName, fontColor } = getColors(value);
   return (
-    <Container colorIndex={getColorIndex(value)}>
+    <Container colorName={colorName} fontColor={fontColor}>
       {typeof score === 'number' && score > 0 && (
         <p className="score">+{score}</p>
       )}
