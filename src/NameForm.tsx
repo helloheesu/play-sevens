@@ -44,7 +44,7 @@ interface Props {
   onSubmit: (username: string) => void;
 }
 const INPUT_ID = 'score-submit-name';
-const Form = ({ onSubmit }: Props) => {
+const NameForm = ({ onSubmit }: Props) => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
@@ -77,4 +77,4 @@ const Form = ({ onSubmit }: Props) => {
     </Container>
   );
 };
-export default Form;
+export default NameForm;
