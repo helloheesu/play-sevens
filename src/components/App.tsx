@@ -10,6 +10,8 @@ import ScoreNameForm from './ScoreNameForm';
 import useResponsiveGrid from '../useResponsiveGrid';
 import ScoreBoard from './ScoreBoard';
 import { ScoreInfo } from '../fbase';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -111,7 +113,7 @@ function App() {
   }, [gridRow, gridCol]);
 
   useEffect(() => {
-    dispatch({ type: 'resetCardSlots' });
+    dispatch({ type: 'restartGame' });
   }, []);
 
   const onLeft = () => dispatch({ type: 'merge', direction: 'left' });
@@ -176,6 +178,10 @@ function App() {
     setScoreBoardInfo({ username, score });
   };
 
+  const handleReset = () => {
+    dispatch({ type: 'restartGame' });
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Wrapper windowHeight={height}>
@@ -208,7 +214,12 @@ function App() {
                   height={cellHeight}
                 />
               </NextValueDisplay>
-              <UIButton>B</UIButton>
+              <UIButton onClick={handleReset}>
+                <FontAwesomeIcon
+                  icon={faRedoAlt}
+                  style={{ transform: 'scaleX(-1)' }}
+                />
+              </UIButton>
             </UIContainer>
             <GridContainer ref={gridContainerRef}>
               <Grid
