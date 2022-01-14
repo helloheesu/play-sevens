@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getScores, ScoreInfo } from '../fbase';
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 const Title = styled.p`
   text-align: center;
 `;
@@ -14,6 +19,13 @@ const First = styled.p`
   color: ${(props) => props.theme.red.darken};
   text-align: center;
   margin-top: 0.5em;
+`;
+const MoreButton = styled.button`
+  color: ${(props) => props.theme.white.main};
+  background-color: ${(props) => props.theme.background.darken};
+  border: none;
+  padding: 0.6em 1em;
+  border-radius: 3em;
 `;
 
 interface Props {
@@ -71,7 +83,7 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
   }
 
   return (
-    <div>
+    <Container>
       <Title>Score Board</Title>
       {isFirstUser && <First>You're the first recorder of this size! 🎉</First>}
       <List>
@@ -81,7 +93,8 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
           </li>
         ))}
       </List>
-    </div>
+      <MoreButton>show all scores</MoreButton>
+    </Container>
   );
 };
 
