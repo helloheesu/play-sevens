@@ -14,6 +14,7 @@ const Container = styled.form`
 
   input {
     width: 10em;
+    max-width: 100%;
   }
 
   input[type='text'] {
