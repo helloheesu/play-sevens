@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import NameForm from './NameForm';
 import Score, { Props as ScoreProps } from './Score';
-import { scoresRef } from './fbase';
+import { scoresRef } from '../fbase';
 import { addDoc } from 'firebase/firestore';
 
 const Container = styled.div``;
