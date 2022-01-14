@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Form from './Form';
+import NameForm from './NameForm';
 import Score, { Props as ScoreProps } from './Score';
 import { scoresRef } from './fbase';
 import { addDoc } from 'firebase/firestore';
@@ -25,7 +25,7 @@ const ScoreNameForm = ({ score, row, col, afterSubmit }: Props) => {
   return (
     <Container>
       <Score score={score} row={row} col={col} />
-      <Form onSubmit={handleSubmit} />
+      <NameForm onSubmit={handleSubmit} />
     </Container>
   );
 };
