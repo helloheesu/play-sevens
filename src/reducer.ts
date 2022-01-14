@@ -33,12 +33,12 @@ interface State {
 type Direction = 'left' | 'right' | 'up' | 'down';
 type Action =
   | {
-      type:
-        | 'resetCardSlots'
-        | 'mergeLeft'
-        | 'mergeRight'
-        | 'mergeUp'
-        | 'mergeDown';
+      type: 'resetCardSlots';
+    }
+  | {
+      type: 'changeGridSize';
+      row: number;
+      col: number;
     }
   | { type: 'merge'; direction: Direction };
 
@@ -154,6 +154,12 @@ const reducer: Reducer<State, Action> = (state, action) => {
         nextNewCardValue: pickRandomValue(state.newCardValues),
       };
     }
+    case 'changeGridSize':
+      return {
+        ...state,
+        rowSize: action.row,
+        colSize: action.col,
+      };
     case 'merge': {
       const newCardSlots = [...state.cardSlots];
       let compareReduce: CompareReducer<boolean>,

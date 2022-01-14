@@ -69,6 +69,16 @@ function App() {
   const [gridCol, setGridCol] = useState(0);
   const [gridRow, setGridRow] = useState(0);
 
+  const [state, dispatch] = useReducer(reducer, {
+    rowSize: 0,
+    colSize: 0,
+    cardSlots: [],
+    initialCardCount: 1,
+    newCardValues: [1, 1, 1, 2, 2, 2, 3],
+    nextNewCardValue: 0,
+    isGameEnded: false,
+  });
+
   const onResize = () => {
     if (gridContainerRef && gridContainerRef.current) {
       const { row, col } = calculateGridSize(
@@ -87,18 +97,8 @@ function App() {
     onResize();
   }, []);
   useEffect(() => {
-    console.log(gridRow, gridCol);
+    dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
   }, [gridRow, gridCol]);
-
-  const [state, dispatch] = useReducer(reducer, {
-    rowSize: 0,
-    colSize: 0,
-    cardSlots: [],
-    initialCardCount: 1,
-    newCardValues: [1, 1, 1, 2, 2, 2, 3],
-    nextNewCardValue: 0,
-    isGameEnded: false,
-  });
 
   useEffect(() => {
     dispatch({ type: 'resetCardSlots' });
