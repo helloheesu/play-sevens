@@ -12,8 +12,7 @@ import reducer from './reducer';
 import { getGridIndexFromLineIndex } from './gridToLine';
 import defaultTheme from './theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
-import Score from './Score';
-import Form from './Form';
+import ScoreNameForm from './ScoreNameForm';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -175,7 +174,6 @@ function App() {
       return cardScore;
     }
   };
-
   const calculateTotalScore = (): number => {
     const totalScore = state.cardSlots.reduce((score, card) => {
       if (!card) {
@@ -192,6 +190,7 @@ function App() {
     height: cellHeight,
     gap: cellGap,
   } = getCellSize(size.scaleUnit);
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <ArrowButtonsLayer
@@ -210,12 +209,13 @@ function App() {
           </NextValueDisplay>
           {state.isGameEnded && (
             <Modal>
-              <Score
+              <ScoreNameForm
                 score={calculateTotalScore()}
                 row={size.gridRow}
                 col={size.gridCol}
+                // [TODO] show scores list from same size
+                afterSubmit={() => {}}
               />
-              <Form />
             </Modal>
           )}
           <Container ref={gridContainerRef}>
