@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 const DimmedContainer = styled.div`
@@ -10,48 +11,23 @@ const DimmedContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const Score = styled.div`
+const Container = styled.div`
   background-color: white;
   border-radius: 3rem;
-  min-width: 20%;
   padding: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  p {
-    margin: 0;
-  }
-  .message {
-    font-size: 1.6rem;
-  }
-  .score {
-    font-size: 3rem;
-    margin-top: 0.5em;
-  }
-  .size {
-    font-family: Arial, Helvetica, sans-serif;
-    margin-top: 1em;
-    opacity: 0.5;
-  }
 `;
 
 interface Props {
-  score: number;
-  row: number;
-  col: number;
+  children: React.ReactNode;
 }
-const Modal = ({ score, row, col }: Props) => {
+const Modal = ({ children }: Props) => {
   return (
     <DimmedContainer>
-      <Score>
-        <p className="message">Your score is:</p>
-        <p className="score">{score}</p>
-        <p className="size">
-          In {row}X{col}
-        </p>
-      </Score>
+      <Container>{children}</Container>
     </DimmedContainer>
   );
 };

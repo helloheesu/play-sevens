@@ -12,6 +12,7 @@ import reducer from './reducer';
 import { getGridIndexFromLineIndex } from './gridToLine';
 import defaultTheme from './theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
+import Score from './Score';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -207,11 +208,13 @@ function App() {
             />
           </NextValueDisplay>
           {state.isGameEnded && (
-            <Modal
-              score={calculateTotalScore()}
-              row={size.gridRow}
-              col={size.gridCol}
-            />
+            <Modal>
+              <Score
+                score={calculateTotalScore()}
+                row={size.gridRow}
+                col={size.gridCol}
+              />
+            </Modal>
           )}
           <Container ref={gridContainerRef}>
             <Grid
