@@ -73,9 +73,7 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
   return (
     <div>
       <Title>Score Board</Title>
-      {isFirstUser && (
-        <First>You're the first recorder of this score! 🎉</First>
-      )}
+      {isFirstUser && <First>You're the first recorder of this size! 🎉</First>}
       <List>
         {scores.map(({ username, score }) => (
           <li key={username}>
