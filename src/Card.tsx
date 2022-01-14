@@ -42,9 +42,11 @@ const Container = styled.div<ContainerProps>`
   }
   .score {
     font-size: 0.5em;
-    color: darkgray;
+    color: ${(props) => props.theme[props.fontColor].main};
+    opacity: 0.5;
     position: absolute;
-    top: 5%;
+    top: 0;
+    margin-top: 0.1em;
   }
   .value {
     color: ${(props) => props.theme[props.fontColor].main};
