@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ColorKey } from './theme';
+import { ColorKey } from '../theme';
 
 const getColors = (
   value: number

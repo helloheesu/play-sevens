@@ -8,9 +8,9 @@ import {
 import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
 import Modal from './Modal';
-import reducer from './reducer';
-import { getGridIndexFromLineIndex } from './gridToLine';
-import defaultTheme from './theme';
+import reducer from '../reducer';
+import { getGridIndexFromLineIndex } from '../gridToLine';
+import defaultTheme from '../theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
 import ScoreNameForm from './ScoreNameForm';
 

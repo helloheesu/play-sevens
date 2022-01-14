@@ -1,7 +1,7 @@
 import { logEvent } from 'firebase/analytics';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import App from './components/App';
 import { analytics } from './fbase';
 import './index.css';
 
