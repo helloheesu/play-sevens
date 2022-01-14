@@ -38,14 +38,6 @@ const Container = styled.form`
     border: none;
     border-radius: ${BORDER_RADIUS};
   }
-
-  input[type='button'] {
-    margin-top: 1em;
-    background: none;
-    border: none;
-    outline: none;
-    color: ${(props) => props.theme.background.darken};
-  }
 `;
 const INPUT_ID = 'score-submit-name';
 const Form = () => {
@@ -63,9 +55,7 @@ const Form = () => {
         // autoComplete="off" // [NOTE] automcomplete covers error message
       />
       <input type="submit" value="Submit" />
-      <input type="button" value="close" />
     </Container>
   );
 };
-
 export default Form;

@@ -103,7 +103,6 @@ const ArrowButtonsLayer = ({
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
-  console.log(height);
 
   return (
     <Wrapper windowHeight={height}>
