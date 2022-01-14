@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
 import Modal from './Modal';
@@ -8,6 +8,7 @@ import defaultTheme from '../theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
 import ScoreNameForm from './ScoreNameForm';
 import useResponsiveGrid from '../useResponsiveGrid';
+import ScoreBoard from './ScoreBoard';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -126,6 +127,21 @@ function App() {
     return totalScore;
   };
 
+  const [isModalOn, setIsModalOn] = useState(false);
+  const [isNameFormOn, setIsNameFormOn] = useState(false);
+  const [isScoreBoardOn, setIsScoreBoardOn] = useState(false);
+
+  useEffect(() => {
+    setIsNameFormOn(state.isGameEnded);
+  }, [state.isGameEnded]);
+  useEffect(() => {
+    setIsModalOn(isNameFormOn || isScoreBoardOn);
+  }, [isNameFormOn, isScoreBoardOn]);
+  const afterSubmit = () => {
+    setIsNameFormOn(false);
+    setIsScoreBoardOn(true);
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <ArrowButtonsLayer
@@ -142,15 +158,17 @@ function App() {
               height={cellHeight}
             />
           </NextValueDisplay>
-          {state.isGameEnded && (
-            <Modal>
-              <ScoreNameForm
-                score={calculateTotalScore()}
-                row={gridRow}
-                col={gridCol}
-                // [TODO] show scores list from same size
-                afterSubmit={() => {}}
-              />
+          {isModalOn && (
+            <Modal onClose={() => setIsModalOn(false)}>
+              {isNameFormOn && (
+                <ScoreNameForm
+                  score={calculateTotalScore()}
+                  row={gridRow}
+                  col={gridCol}
+                  afterSubmit={afterSubmit}
+                />
+              )}
+              <ScoreBoard isOn={isScoreBoardOn} />
             </Modal>
           )}
           <Container ref={gridContainerRef}>
