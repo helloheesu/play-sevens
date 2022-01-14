@@ -22,6 +22,13 @@ const Container = styled.div`
   font-size: 1.6rem;
   color: ${(props) => props.theme.black.main};
 `;
+const TextButton = styled.button`
+  margin-top: 1em;
+  background: none;
+  border: none;
+  outline: none;
+  color: ${(props) => props.theme.background.darken};
+`;
 
 interface Props {
   children: React.ReactNode;
@@ -29,7 +36,10 @@ interface Props {
 const Modal = ({ children }: Props) => {
   return (
     <DimmedContainer>
-      <Container>{children}</Container>
+      <Container>
+        {children}
+        <TextButton>close</TextButton>
+      </Container>
     </DimmedContainer>
   );
 };
