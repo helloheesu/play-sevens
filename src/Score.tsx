@@ -15,7 +15,6 @@ const Container = styled.div`
   }
   .size {
     font-size: 0.6em;
-    font-family: Arial, Helvetica, sans-serif;
     margin-top: 1em;
     color: ${(props) => props.theme.background.darken};
   }

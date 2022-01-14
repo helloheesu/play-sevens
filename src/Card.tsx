@@ -28,7 +28,6 @@ const Container = styled.div<ContainerProps>`
   align-items: center;
   flex-direction: column;
 
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 1.6rem;
   font-weight: 600;
 
