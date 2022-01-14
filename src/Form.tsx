@@ -39,20 +39,39 @@ const Container = styled.form`
     border-radius: ${BORDER_RADIUS};
   }
 `;
+const INPUT_NAME = 'username';
+interface Props {
+  onSubmit: (username: string) => void;
+}
 const INPUT_ID = 'score-submit-name';
-const Form = () => {
+const Form = ({ onSubmit }: Props) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+
+    const formElement = e.target as HTMLFormElement;
+    const inputElement = formElement[INPUT_NAME];
+    const username = inputElement.value;
+
+    onSubmit(username);
+  };
+
   return (
-    <Container>
+    <Container onSubmit={handleSubmit}>
       <label htmlFor={INPUT_ID}>Your Name:</label>
       {/* reason for 'size': https://www.geeksforgeeks.org/how-to-specify-the-width-of-an-input-element-in-html5/ */}
       <input
         id={INPUT_ID}
         type="text"
+        name={INPUT_NAME}
         size={1}
         spellCheck="false"
         autoFocus
         required
-        // autoComplete="off" // [NOTE] automcomplete covers error message
+        /*
+          [NOTE] automcomplete covers error message
+          should "defaultValue" from storage instead of autocomplete
+        */
+        // autoComplete="off"
       />
       <input type="submit" value="Submit" />
     </Container>

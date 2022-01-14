@@ -19,7 +19,7 @@ const Container = styled.div`
     color: ${(props) => props.theme.background.darken};
   }
 `;
-interface Props {
+export interface Props {
   score: number;
   row: number;
   col: number;
