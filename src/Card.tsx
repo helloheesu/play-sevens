@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { CELL_HEIGHT_PX, CELL_WIDTH_PX } from './consts';
 import { ColorKey } from './theme';
 
 const getColors = (
@@ -19,8 +20,8 @@ interface ContainerProps {
   fontColor: ColorKey;
 }
 const Container = styled.div<ContainerProps>`
-  width: 100%;
-  height: 100%;
+  width: ${CELL_WIDTH_PX}px;
+  height: ${CELL_HEIGHT_PX}px;
   display: flex;
   justify-content: center;
   align-items: center;
