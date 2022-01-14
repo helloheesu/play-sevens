@@ -167,7 +167,7 @@ function App() {
 
   const [isModalOn, setIsModalOn] = useState(false);
   const [isNameFormOn, setIsNameFormOn] = useState(false);
-  const [scoreBoardInfo, setScoreBoardInfo] = useState<ScoreInfo>();
+  const [scoreBoardInfo, setScoreBoardInfo] = useState<ScoreInfo | null>();
 
   useEffect(() => {
     setIsNameFormOn(state.isGameEnded);
@@ -176,6 +176,10 @@ function App() {
   const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
     setScoreBoardInfo({ username, score });
+  };
+  const handleClose = () => {
+    setIsModalOn(false);
+    setScoreBoardInfo(null);
   };
 
   const handleReset = () => {
@@ -186,7 +190,7 @@ function App() {
     <ThemeProvider theme={defaultTheme}>
       <Wrapper windowHeight={height}>
         {isModalOn && (
-          <Modal onClose={() => setIsModalOn(false)}>
+          <Modal onClose={handleClose}>
             {isNameFormOn && (
               <ScoreNameForm
                 score={calculateTotalScore()}
