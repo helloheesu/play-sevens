@@ -1,41 +1,40 @@
-interface Color {
+interface IColor {
   main: string;
   darken: string;
 }
 
-export const Colors = {
-  red: 'red',
-  blue: 'blue',
-  white: 'white',
-  black: 'black',
-  background: 'background',
-};
-export type ColorKeys = typeof Colors[keyof typeof Colors];
+export type ColorKey = 'red' | 'blue' | 'white' | 'black' | 'background';
+
 type Theme = {
-  [colorName in ColorKeys]: Color;
+  [colorName in ColorKey]: IColor;
+} & {
+  cellHeight: string;
+  cellWidth: string;
 };
 
 const defaultTheme: Theme = {
-  [Colors.red]: {
+  red: {
     main: '#E94E6C',
     darken: '#A12840',
   },
-  [Colors.blue]: {
+  blue: {
     main: '#6592FC',
     darken: '#333090',
   },
-  [Colors.white]: {
+  white: {
     main: '#ffffff',
     darken: '#f1cd88',
   },
-  [Colors.black]: {
+  black: {
     main: '#250404',
     darken: '#000000',
   },
-  [Colors.background]: {
+  background: {
     main: '#eee',
     darken: '#a9a9a9',
   },
+  cellWidth: '3rem',
+  cellHeight: '4rem',
 };
 
 export default defaultTheme;

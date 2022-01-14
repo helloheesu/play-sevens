@@ -31,8 +31,8 @@ const Grid = styled.div<{ row: number; col: number }>`
 `;
 const Cell = styled.div`
   background-color: ${(props) => props.theme.background.darken};
-  width: 3rem;
-  height: 4rem;
+  width: ${(props) => props.theme.cellWidth};
+  height: ${(props) => props.theme.cellHeight};
 `;
 
 function App() {

@@ -1,20 +1,22 @@
 import styled from 'styled-components';
-import { ColorKeys, Colors } from './theme';
+import { ColorKey } from './theme';
 
-const getColors = (value: number) => {
+const getColors = (
+  value: number
+): { colorName: ColorKey; fontColor: ColorKey } => {
   switch (value) {
     case 1:
-      return { colorName: Colors.red, fontColor: Colors.white };
+      return { colorName: 'red', fontColor: 'white' };
     case 2:
-      return { colorName: Colors.blue, fontColor: Colors.white };
+      return { colorName: 'blue', fontColor: 'white' };
     default:
-      return { colorName: Colors.white, fontColor: Colors.black };
+      return { colorName: 'white', fontColor: 'black' };
   }
 };
 
 interface ContainerProps {
-  colorName: ColorKeys;
-  fontColor: ColorKeys;
+  colorName: ColorKey;
+  fontColor: ColorKey;
 }
 const Container = styled.div<ContainerProps>`
   width: 100%;
