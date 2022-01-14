@@ -1,7 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { collection, getFirestore } from 'firebase/firestore';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getFirestore,
+  setDoc,
+} from 'firebase/firestore';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -23,4 +29,21 @@ const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
-export const scoresRef = collection(db, 'scores');
+const sizesRef = collection(db, 'sizes');
+const getSizeId = (row: number, col: number) => `${row}X${col}`;
+
+export const addScore = async (
+  username: string,
+  score: number,
+  row: number,
+  col: number
+) => {
+  const userRef = doc(sizesRef, getSizeId(row, col), 'users', username);
+  await setDoc(
+    userRef,
+    {
+      scores: arrayUnion(score),
+    },
+    { merge: true }
+  );
+};
