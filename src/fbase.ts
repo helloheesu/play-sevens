@@ -5,6 +5,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDocs,
   getFirestore,
   setDoc,
 } from 'firebase/firestore';
@@ -46,4 +47,30 @@ export const addScore = async (
     },
     { merge: true }
   );
+};
+export interface ScoreInfo {
+  username: string;
+  score: number;
+}
+export const getScores = async (row: number, col: number) => {
+  const usersRef = collection(sizesRef, getSizeId(row, col), 'users');
+  const snapshot = await getDocs(usersRef);
+
+  const result: ScoreInfo[] = [];
+  snapshot.forEach((doc) => {
+    const username = doc.id;
+    const { scores } = doc.data();
+
+    const score = scores.reduce((pv: number, cv: number) => {
+      return Math.max(pv, cv);
+    });
+
+    result.push({ username, score });
+  });
+
+  result.sort(({ score: scoreA }, { score: scoreB }) => {
+    return scoreB - scoreA;
+  });
+
+  return result;
 };
