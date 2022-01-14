@@ -27,11 +27,30 @@ const ContentWrapper = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
 `;
+
+const UIContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 0.4rem;
+`;
+const UIButton = styled.button`
+  border: none;
+  border-radius: 0.3rem;
+  padding: 0.5em 1em;
+  background-color: ${(props) => props.theme.background.darken};
+  color: ${(props) => props.theme.white.main};
+  box-shadow: 0 0.1rem 0 0 ${(props) => props.theme.black.main};
+`;
+const NextValueDisplay = styled.div`
+  transform: scale(0.7);
+`;
+
 const GridContainer = styled.div`
   background-color: ${(props) => props.theme.background.main};
   position: relative;
@@ -61,10 +80,6 @@ const Cell = styled.div<{ width: number; height: number }>`
   background-color: ${(props) => props.theme.background.darken};
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
-`;
-const NextValueDisplay = styled.div`
-  transform: scale(0.7);
-  margin-bottom: 1rem;
 `;
 
 function App() {
@@ -184,13 +199,17 @@ function App() {
           onUp={onUp}
         >
           <ContentWrapper>
-            <NextValueDisplay>
-              <Card
-                value={state.nextNewCardValue}
-                width={cellWidth}
-                height={cellHeight}
-              />
-            </NextValueDisplay>
+            <UIContainer>
+              <UIButton>A</UIButton>
+              <NextValueDisplay>
+                <Card
+                  value={state.nextNewCardValue}
+                  width={cellWidth}
+                  height={cellHeight}
+                />
+              </NextValueDisplay>
+              <UIButton>B</UIButton>
+            </UIContainer>
             <GridContainer ref={gridContainerRef}>
               <Grid
                 row={gridRow}
