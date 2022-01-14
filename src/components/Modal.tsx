@@ -13,6 +13,9 @@ const DimmedContainer = styled.div`
 `;
 const Container = styled.div`
   background-color: white;
+  max-width: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
   border-radius: 3rem;
   padding: 3rem;
   display: flex;
@@ -21,6 +24,11 @@ const Container = styled.div`
   flex-direction: column;
   font-size: 1.6rem;
   color: ${(props) => props.theme.black.main};
+`;
+const ContentContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
 `;
 const TextButton = styled.button`
   margin-top: 1em;
@@ -38,7 +46,7 @@ const Modal = ({ children, onClose }: Props) => {
   return (
     <DimmedContainer>
       <Container>
-        {children}
+        <ContentContainer>{children}</ContentContainer>
         <TextButton onClick={onClose}>close</TextButton>
       </Container>
     </DimmedContainer>

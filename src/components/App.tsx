@@ -164,6 +164,19 @@ function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Wrapper windowHeight={height}>
+        {isModalOn && (
+          <Modal onClose={() => setIsModalOn(false)}>
+            {isNameFormOn && (
+              <ScoreNameForm
+                score={calculateTotalScore()}
+                row={gridRow}
+                col={gridCol}
+                onSubmit={onSubmit}
+              />
+            )}
+            <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
+          </Modal>
+        )}
         <ArrowButtonsLayer
           onDown={onDown}
           onLeft={onLeft}
@@ -178,19 +191,6 @@ function App() {
                 height={cellHeight}
               />
             </NextValueDisplay>
-            {isModalOn && (
-              <Modal onClose={() => setIsModalOn(false)}>
-                {isNameFormOn && (
-                  <ScoreNameForm
-                    score={calculateTotalScore()}
-                    row={gridRow}
-                    col={gridCol}
-                    onSubmit={onSubmit}
-                  />
-                )}
-                <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
-              </Modal>
-            )}
             <GridContainer ref={gridContainerRef}>
               <Grid
                 row={gridRow}
