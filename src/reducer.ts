@@ -33,7 +33,7 @@ interface State {
 type Direction = 'left' | 'right' | 'up' | 'down';
 type Action =
   | {
-      type: 'resetCardSlots';
+      type: 'restartGame';
     }
   | {
       type: 'changeGridSize';
@@ -140,7 +140,7 @@ const isAnyMoveable = (
 
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
-    case 'resetCardSlots': {
+    case 'restartGame': {
       const initialCardSlots = new Array(state.rowSize * state.colSize);
       const newValue = pickRandomValue(state.newCardValues);
       const initialCardInfo = { row: 2, col: 1, value: newValue };
@@ -152,6 +152,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
         ...state,
         cardSlots: initialCardSlots,
         nextNewCardValue: pickRandomValue(state.newCardValues),
+        isGameEnded: false,
       };
     }
     case 'changeGridSize':
