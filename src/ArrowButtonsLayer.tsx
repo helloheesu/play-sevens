@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: ${window.innerHeight}px;
   display: grid;
   grid-template-rows: 15% minmax(0, 1fr) 15%;
   grid-template-columns: 15% minmax(0, 1fr) 15%;
