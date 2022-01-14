@@ -9,6 +9,7 @@ import ArrowButtonsLayer from './ArrowButtonsLayer';
 import ScoreNameForm from './ScoreNameForm';
 import useResponsiveGrid from '../useResponsiveGrid';
 import ScoreBoard from './ScoreBoard';
+import { ScoreInfo } from '../fbase';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -129,15 +130,15 @@ function App() {
 
   const [isModalOn, setIsModalOn] = useState(false);
   const [isNameFormOn, setIsNameFormOn] = useState(false);
-  const [isScoreBoardOn, setIsScoreBoardOn] = useState(false);
+  const [scoreBoardInfo, setScoreBoardInfo] = useState<ScoreInfo>();
 
   useEffect(() => {
     setIsNameFormOn(state.isGameEnded);
     setIsModalOn(state.isGameEnded);
   }, [state.isGameEnded]);
-  const afterSubmit = () => {
+  const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
-    setIsScoreBoardOn(true);
+    setScoreBoardInfo({ username, score });
   };
 
   return (
@@ -163,10 +164,10 @@ function App() {
                   score={calculateTotalScore()}
                   row={gridRow}
                   col={gridCol}
-                  afterSubmit={afterSubmit}
+                  onSubmit={onSubmit}
                 />
               )}
-              <ScoreBoard isOn={isScoreBoardOn} />
+              <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
             </Modal>
           )}
           <Container ref={gridContainerRef}>

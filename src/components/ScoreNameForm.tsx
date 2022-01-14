@@ -6,12 +6,12 @@ import { addScore } from '../fbase';
 const Container = styled.div``;
 
 interface Props extends ScoreProps {
-  afterSubmit: () => void;
+  onSubmit: (username: string, score: number) => void;
 }
-const ScoreNameForm = ({ score, row, col, afterSubmit }: Props) => {
+const ScoreNameForm = ({ score, row, col, onSubmit }: Props) => {
   const handleSubmit = async (username: string) => {
     await addScore(username, score, row, col);
-    afterSubmit();
+    onSubmit(username, score);
   };
   return (
     <Container>
