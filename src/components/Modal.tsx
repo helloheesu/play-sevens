@@ -32,13 +32,14 @@ const TextButton = styled.button`
 
 interface Props {
   children: React.ReactNode;
+  onClose: () => void;
 }
-const Modal = ({ children }: Props) => {
+const Modal = ({ children, onClose }: Props) => {
   return (
     <DimmedContainer>
       <Container>
         {children}
-        <TextButton>close</TextButton>
+        <TextButton onClick={onClose}>close</TextButton>
       </Container>
     </DimmedContainer>
   );
