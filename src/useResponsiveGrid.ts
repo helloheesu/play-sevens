@@ -21,14 +21,17 @@ const calculateGridSize = (
   };
 };
 
-const useResponsiveGrid = (containerRef: React.RefObject<HTMLDivElement>) => {
+const useResponsiveGrid = (
+  containerRef: React.RefObject<HTMLDivElement>,
+  shouldContinue: boolean = true
+) => {
   const [gridRow, setGridRow] = useState(0);
   const [gridCol, setGridCol] = useState(0);
   const [scaleUnit, setScaleUnit] = useState(DEFAULT_SCALE_UNIT);
 
   useEffect(() => {
     const ref = containerRef?.current;
-    if (ref) {
+    if (ref && shouldContinue) {
       const onResize = () => {
         if (containerRef && containerRef.current) {
           const { clientWidth, clientHeight } = containerRef.current;
@@ -52,7 +55,7 @@ const useResponsiveGrid = (containerRef: React.RefObject<HTMLDivElement>) => {
       window.addEventListener('resize', onResize);
       return () => window.removeEventListener('resize', onResize);
     }
-  }, [containerRef]);
+  }, [containerRef, shouldContinue]);
 
   const {
     width: cellWidth,

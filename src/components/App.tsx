@@ -77,10 +77,6 @@ function App() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-  const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
-    useResponsiveGrid(gridContainerRef);
-
   const [state, dispatch] = useReducer(reducer, {
     rowSize: 0,
     colSize: 0,
@@ -90,6 +86,10 @@ function App() {
     nextNewCardValue: 0,
     isGameEnded: false,
   });
+
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
+    useResponsiveGrid(gridContainerRef, state.isGameEnded === false);
 
   useEffect(() => {
     dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
