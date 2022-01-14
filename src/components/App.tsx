@@ -133,10 +133,8 @@ function App() {
 
   useEffect(() => {
     setIsNameFormOn(state.isGameEnded);
+    setIsModalOn(state.isGameEnded);
   }, [state.isGameEnded]);
-  useEffect(() => {
-    setIsModalOn(isNameFormOn || isScoreBoardOn);
-  }, [isNameFormOn, isScoreBoardOn]);
   const afterSubmit = () => {
     setIsNameFormOn(false);
     setIsScoreBoardOn(true);
