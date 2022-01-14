@@ -28,47 +28,55 @@ const Arrow = styled.div`
   border-radius: 0.3rem;
   background-color: ${(props) => props.theme.background.main};
 `;
-type ButtonProps = React.HTMLProps<HTMLDivElement>;
-const RightButton = ({ style, onClick }: ButtonProps) => {
+interface ButtonProps {
+  onClick?: () => void;
+}
+const RightButton = ({ onClick }: ButtonProps) => {
   return (
     <Container
       onClick={onClick}
       style={{
         gridArea: 'right',
-        ...style,
       }}
     >
-      <Arrow>&#9654;</Arrow>
+      <Arrow>▶️</Arrow>
     </Container>
   );
 };
 const LeftButton = ({ onClick }: ButtonProps) => {
   return (
-    <RightButton
+    <Container
       onClick={onClick}
-      style={{ transform: 'rotate(180deg)', gridArea: 'left' }}
-    />
+      style={{
+        gridArea: 'left',
+      }}
+    >
+      <Arrow>◀️</Arrow>
+    </Container>
   );
 };
-const DownButton = ({ style, onClick }: ButtonProps) => {
+const DownButton = ({ onClick }: ButtonProps) => {
   return (
     <Container
       onClick={onClick}
       style={{
         gridArea: 'down',
-        ...style,
       }}
     >
-      <Arrow>&#9660;</Arrow>
+      <Arrow>🔽</Arrow>
     </Container>
   );
 };
 const UpButton = ({ onClick }: ButtonProps) => {
   return (
-    <DownButton
+    <Container
       onClick={onClick}
-      style={{ transform: 'rotate(180deg)', gridArea: 'up' }}
-    />
+      style={{
+        gridArea: 'up',
+      }}
+    >
+      <Arrow>🔼</Arrow>
+    </Container>
   );
 };
 
