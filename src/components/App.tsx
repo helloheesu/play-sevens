@@ -11,7 +11,7 @@ import useResponsiveGrid from '../useResponsiveGrid';
 import ScoreBoard from './ScoreBoard';
 import { ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -210,7 +210,9 @@ function App() {
         >
           <ContentWrapper>
             <UIContainer>
-              <UIButton>A</UIButton>
+              <UIButton onClick={() => alert('메뉴는 아직 만드는 중이예요 :p')}>
+                <FontAwesomeIcon icon={faList} />
+              </UIButton>
               <NextValueDisplay>
                 <Card
                   value={state.nextNewCardValue}
