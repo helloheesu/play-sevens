@@ -206,7 +206,13 @@ function App() {
               height={cellHeight}
             />
           </NextValueDisplay>
-          {state.isGameEnded && <Modal score={calculateTotalScore()} />}
+          {state.isGameEnded && (
+            <Modal
+              score={calculateTotalScore()}
+              row={size.gridRow}
+              col={size.gridCol}
+            />
+          )}
           <Container ref={gridContainerRef}>
             <Grid
               row={size.gridRow}
