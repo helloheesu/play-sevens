@@ -12,18 +12,6 @@ import reducer from './reducer';
 import { getGridIndexFromLineIndex } from './gridToLine';
 import defaultTheme from './theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
-import { CELL_GAP_PX, CELL_HEIGHT_PX, CELL_WIDTH_PX } from './consts';
-
-const calculateGridSize = (containerWidth: number, containerHeight: number) => {
-  return {
-    col: Math.floor(
-      (containerWidth - CELL_GAP_PX) / (CELL_WIDTH_PX + CELL_GAP_PX)
-    ),
-    row: Math.floor(
-      (containerHeight - CELL_GAP_PX) / (CELL_HEIGHT_PX + CELL_GAP_PX)
-    ),
-  };
-};
 
 const Wrapper = styled.div`
   width: 100%;
@@ -42,32 +30,65 @@ const Container = styled.div`
   flex-grow: 1;
 `;
 
-const Grid = styled.div<{ row: number; col: number }>`
+const Grid = styled.div<{
+  row: number;
+  col: number;
+  gap: number;
+  width: number;
+  height: number;
+}>`
   display: grid;
-  padding: ${CELL_GAP_PX}px;
-  gap: ${CELL_GAP_PX}px;
+  padding: ${(props) => props.gap}px;
+  gap: ${(props) => props.gap}px;
   box-sizing: border-box;
   grid-template: ${(props) =>
-    `repeat(${props.row}, minmax(${CELL_HEIGHT_PX}px, auto)) / repeat(${props.col}, minmax(${CELL_WIDTH_PX}px, auto))`};
+    `repeat(${props.row}, minmax(${props.height}px, auto)) / repeat(${props.col}, minmax(${props.width}px, auto))`};
   width: 100%;
   height: 100%;
   align-items: center;
   justify-items: center;
 `;
-const Cell = styled.div`
+const Cell = styled.div<{ width: number; height: number }>`
   background-color: ${(props) => props.theme.background.darken};
-  width: ${CELL_WIDTH_PX}px;
-  height: ${CELL_HEIGHT_PX}px;
+  width: ${(props) => props.width}px;
+  height: ${(props) => props.height}px;
 `;
 const NextValueDisplay = styled.div`
   transform: scale(0.7);
   margin-bottom: 1rem;
 `;
 
+const DEFAULT_SCALE_UNIT = 16;
+const SMALL_SCALE_UNIT = 12;
+const getCellSize = (scaleUnit: number) => {
+  return {
+    gap: scaleUnit,
+    width: scaleUnit * 3,
+    height: scaleUnit * 4,
+  };
+};
+const calculateGridSize = (
+  containerWidth: number,
+  containerHeight: number,
+  scaleUnit: number
+) => {
+  const { width, height, gap } = getCellSize(scaleUnit);
+  return {
+    col: Math.floor((containerWidth - gap) / (width + gap)),
+    row: Math.floor((containerHeight - gap) / (height + gap)),
+  };
+};
 function App() {
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const [gridCol, setGridCol] = useState(0);
-  const [gridRow, setGridRow] = useState(0);
+  const [size, setSize] = useState<{
+    gridRow: number;
+    gridCol: number;
+    scaleUnit: number;
+  }>({
+    gridRow: 0,
+    gridCol: 0,
+    scaleUnit: DEFAULT_SCALE_UNIT,
+  });
 
   const [state, dispatch] = useReducer(reducer, {
     rowSize: 0,
@@ -81,12 +102,23 @@ function App() {
 
   const onResize = () => {
     if (gridContainerRef && gridContainerRef.current) {
+      const { clientWidth, clientHeight } = gridContainerRef.current;
+      const scaleUnit =
+        clientWidth > 400 && clientHeight > 400
+          ? DEFAULT_SCALE_UNIT
+          : SMALL_SCALE_UNIT;
+
       const { row, col } = calculateGridSize(
-        gridContainerRef.current.clientWidth,
-        gridContainerRef.current.clientHeight
+        clientWidth,
+        clientHeight,
+        scaleUnit
       );
-      setGridCol(col);
-      setGridRow(row);
+
+      setSize({
+        gridRow: row,
+        gridCol: col,
+        scaleUnit,
+      });
     }
   };
   useEffect(() => {
@@ -97,8 +129,8 @@ function App() {
     onResize();
   }, []);
   useEffect(() => {
-    dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
-  }, [gridRow, gridCol]);
+    dispatch({ type: 'changeGridSize', row: size.gridRow, col: size.gridCol });
+  }, [size.gridRow, size.gridCol]);
 
   useEffect(() => {
     dispatch({ type: 'resetCardSlots' });
@@ -153,6 +185,11 @@ function App() {
 
     return totalScore;
   };
+  const {
+    width: cellWidth,
+    height: cellHeight,
+    gap: cellGap,
+  } = getCellSize(size.scaleUnit);
   return (
     <ThemeProvider theme={defaultTheme}>
       <ArrowButtonsLayer
@@ -163,22 +200,46 @@ function App() {
       >
         <Wrapper>
           <NextValueDisplay>
-            <Card value={state.nextNewCardValue} />
+            <Card
+              value={state.nextNewCardValue}
+              width={cellWidth}
+              height={cellHeight}
+            />
           </NextValueDisplay>
           {state.isGameEnded && <Modal score={calculateTotalScore()} />}
           <Container ref={gridContainerRef}>
-            <Grid row={gridRow} col={gridCol} style={{ position: 'absolute' }}>
-              {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
-                <Cell key={i} />
-              ))}
+            <Grid
+              row={size.gridRow}
+              col={size.gridCol}
+              width={cellWidth}
+              height={cellHeight}
+              gap={cellGap}
+              style={{ position: 'absolute' }}
+            >
+              {Array.apply(null, Array(size.gridRow * size.gridCol)).map(
+                (_, i) => (
+                  <Cell key={i} width={cellWidth} height={cellHeight} />
+                )
+              )}
             </Grid>
-            <Grid row={gridRow} col={gridCol}>
+            <Grid
+              row={size.gridRow}
+              col={size.gridCol}
+              width={cellWidth}
+              height={cellHeight}
+              gap={cellGap}
+            >
               {state.cardSlots.map((card, index) => {
-                const { row, col } = getGridIndexFromLineIndex(index, gridCol);
+                const { row, col } = getGridIndexFromLineIndex(
+                  index,
+                  size.gridCol
+                );
                 return (
                   card && (
                     <Cell
                       key={card.id}
+                      width={cellWidth}
+                      height={cellHeight}
                       style={{
                         gridRow: `${row + 1}/${row + 2}`,
                         gridColumn: `${col + 1}/${col + 2}`,
@@ -191,6 +252,8 @@ function App() {
                             ? undefined
                             : calculateScore(card.value)
                         }
+                        width={cellWidth}
+                        height={cellHeight}
                       />
                     </Cell>
                   )

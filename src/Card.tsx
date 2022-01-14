@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { CELL_HEIGHT_PX, CELL_WIDTH_PX } from './consts';
 import { ColorKey } from './theme';
 
 const getColors = (
@@ -18,10 +17,12 @@ const getColors = (
 interface ContainerProps {
   colorName: ColorKey;
   fontColor: ColorKey;
+  width: number;
+  height: number;
 }
 const Container = styled.div<ContainerProps>`
-  width: ${CELL_WIDTH_PX}px;
-  height: ${CELL_HEIGHT_PX}px;
+  width: ${(props) => props.width}px;
+  height: ${(props) => props.height}px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,11 +54,18 @@ const Container = styled.div<ContainerProps>`
 interface Props {
   value: number;
   score?: number;
+  width: number;
+  height: number;
 }
-const Card = ({ value, score }: Props) => {
+const Card = ({ value, score, width, height }: Props) => {
   const { colorName, fontColor } = getColors(value);
   return (
-    <Container colorName={colorName} fontColor={fontColor}>
+    <Container
+      colorName={colorName}
+      fontColor={fontColor}
+      width={width}
+      height={height}
+    >
       {typeof score === 'number' && score > 0 && (
         <p className="score">+{score}</p>
       )}

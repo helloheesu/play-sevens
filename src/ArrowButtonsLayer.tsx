@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
+// [NOTE] 100vh doesn't work properly on mobile
+interface WrapperProps {
+  windowHeight: number;
+}
+const Wrapper = styled.div<WrapperProps>`
   width: 100vw;
-  height: ${window.innerHeight}px;
+  height: ${(props) => props.windowHeight}px;
   display: grid;
   grid-template-rows: 15% minmax(0, 1fr) 15%;
   grid-template-columns: 15% minmax(0, 1fr) 15%;
@@ -91,8 +95,18 @@ const ArrowButtonsLayer = ({
   onRight,
   onDown,
 }: Props) => {
+  const [height, setHeight] = useState(window.innerHeight);
+  useEffect(() => {
+    const onResize = () => {
+      setHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  console.log(height);
+
   return (
-    <Wrapper>
+    <Wrapper windowHeight={height}>
       <UpButton onClick={onUp} />
       <LeftButton onClick={onLeft} />
       <RightButton onClick={onRight} />
