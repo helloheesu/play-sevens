@@ -13,6 +13,7 @@ import { getGridIndexFromLineIndex } from './gridToLine';
 import defaultTheme from './theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
 import Score from './Score';
+import Form from './Form';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -214,6 +215,7 @@ function App() {
                 row={size.gridRow}
                 col={size.gridCol}
               />
+              <Form />
             </Modal>
           )}
           <Container ref={gridContainerRef}>

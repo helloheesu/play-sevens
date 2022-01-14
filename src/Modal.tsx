@@ -19,6 +19,8 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  font-size: 1.6rem;
+  color: ${(props) => props.theme.black.main};
 `;
 
 interface Props {

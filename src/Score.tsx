@@ -7,20 +7,17 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
 
-  p {
-    margin: 0;
-  }
-  .message {
-    font-size: 1.6rem;
-  }
   .score {
-    font-size: 3rem;
     margin-top: 0.5em;
+    .message {
+      font-size: 0.8em;
+    }
   }
   .size {
+    font-size: 0.6em;
     font-family: Arial, Helvetica, sans-serif;
     margin-top: 1em;
-    opacity: 0.5;
+    color: ${(props) => props.theme.background.darken};
   }
 `;
 interface Props {
@@ -31,8 +28,10 @@ interface Props {
 const Score = ({ score, row, col }: Props) => {
   return (
     <Container>
-      <p className="message">Your score is:</p>
-      <p className="score">{score}</p>
+      <p className="score">
+        <span className="message">Your scored: </span>
+        <span>{score}</span>
+      </p>
       <p className="size">
         In {row}X{col}
       </p>
