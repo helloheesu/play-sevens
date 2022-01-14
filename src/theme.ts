@@ -7,9 +7,6 @@ export type ColorKey = 'red' | 'blue' | 'white' | 'black' | 'background';
 
 type Theme = {
   [colorName in ColorKey]: IColor;
-} & {
-  cellHeight: string;
-  cellWidth: string;
 };
 
 const defaultTheme: Theme = {
@@ -33,8 +30,6 @@ const defaultTheme: Theme = {
     main: '#eee',
     darken: '#a9a9a9',
   },
-  cellWidth: '3rem',
-  cellHeight: '4rem',
 };
 
 export default defaultTheme;
