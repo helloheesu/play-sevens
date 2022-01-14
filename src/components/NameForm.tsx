@@ -44,6 +44,8 @@ interface Props {
   onSubmit: (username: string) => void;
 }
 const INPUT_ID = 'score-submit-name';
+const STORAGE_KEY = 'username';
+const storedUsername = localStorage.getItem(STORAGE_KEY);
 const NameForm = ({ onSubmit }: Props) => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -51,6 +53,8 @@ const NameForm = ({ onSubmit }: Props) => {
     const formElement = e.target as HTMLFormElement;
     const inputElement = formElement[INPUT_NAME];
     const username = inputElement.value;
+
+    localStorage.setItem(STORAGE_KEY, username);
 
     onSubmit(username);
   };
@@ -67,11 +71,8 @@ const NameForm = ({ onSubmit }: Props) => {
         spellCheck="false"
         autoFocus
         required
-        /*
-          [NOTE] automcomplete covers error message
-          should "defaultValue" from storage instead of autocomplete
-        */
-        // autoComplete="off"
+        defaultValue={storedUsername || ''}
+        autoComplete="off"
       />
       <input type="submit" value="Submit" />
     </Container>
