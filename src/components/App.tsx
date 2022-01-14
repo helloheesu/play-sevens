@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
 import Modal from './Modal';
@@ -13,6 +7,7 @@ import { getGridIndexFromLineIndex } from '../gridToLine';
 import defaultTheme from '../theme';
 import ArrowButtonsLayer from './ArrowButtonsLayer';
 import ScoreNameForm from './ScoreNameForm';
+import useResponsiveGrid from '../useResponsiveGrid';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -59,37 +54,10 @@ const NextValueDisplay = styled.div`
   margin-bottom: 1rem;
 `;
 
-const DEFAULT_SCALE_UNIT = 16;
-const SMALL_SCALE_UNIT = 12;
-const getCellSize = (scaleUnit: number) => {
-  return {
-    gap: scaleUnit,
-    width: scaleUnit * 3,
-    height: scaleUnit * 4,
-  };
-};
-const calculateGridSize = (
-  containerWidth: number,
-  containerHeight: number,
-  scaleUnit: number
-) => {
-  const { width, height, gap } = getCellSize(scaleUnit);
-  return {
-    col: Math.floor((containerWidth - gap) / (width + gap)),
-    row: Math.floor((containerHeight - gap) / (height + gap)),
-  };
-};
 function App() {
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState<{
-    gridRow: number;
-    gridCol: number;
-    scaleUnit: number;
-  }>({
-    gridRow: 0,
-    gridCol: 0,
-    scaleUnit: DEFAULT_SCALE_UNIT,
-  });
+  const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
+    useResponsiveGrid(gridContainerRef);
 
   const [state, dispatch] = useReducer(reducer, {
     rowSize: 0,
@@ -101,37 +69,9 @@ function App() {
     isGameEnded: false,
   });
 
-  const onResize = () => {
-    if (gridContainerRef && gridContainerRef.current) {
-      const { clientWidth, clientHeight } = gridContainerRef.current;
-      const scaleUnit =
-        clientWidth > 400 && clientHeight > 400
-          ? DEFAULT_SCALE_UNIT
-          : SMALL_SCALE_UNIT;
-
-      const { row, col } = calculateGridSize(
-        clientWidth,
-        clientHeight,
-        scaleUnit
-      );
-
-      setSize({
-        gridRow: row,
-        gridCol: col,
-        scaleUnit,
-      });
-    }
-  };
   useEffect(() => {
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-  useLayoutEffect(() => {
-    onResize();
-  }, []);
-  useEffect(() => {
-    dispatch({ type: 'changeGridSize', row: size.gridRow, col: size.gridCol });
-  }, [size.gridRow, size.gridCol]);
+    dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
+  }, [gridRow, gridCol]);
 
   useEffect(() => {
     dispatch({ type: 'resetCardSlots' });
@@ -185,11 +125,6 @@ function App() {
 
     return totalScore;
   };
-  const {
-    width: cellWidth,
-    height: cellHeight,
-    gap: cellGap,
-  } = getCellSize(size.scaleUnit);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -211,8 +146,8 @@ function App() {
             <Modal>
               <ScoreNameForm
                 score={calculateTotalScore()}
-                row={size.gridRow}
-                col={size.gridCol}
+                row={gridRow}
+                col={gridCol}
                 // [TODO] show scores list from same size
                 afterSubmit={() => {}}
               />
@@ -220,31 +155,26 @@ function App() {
           )}
           <Container ref={gridContainerRef}>
             <Grid
-              row={size.gridRow}
-              col={size.gridCol}
+              row={gridRow}
+              col={gridCol}
               width={cellWidth}
               height={cellHeight}
               gap={cellGap}
               style={{ position: 'absolute' }}
             >
-              {Array.apply(null, Array(size.gridRow * size.gridCol)).map(
-                (_, i) => (
-                  <Cell key={i} width={cellWidth} height={cellHeight} />
-                )
-              )}
+              {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
+                <Cell key={i} width={cellWidth} height={cellHeight} />
+              ))}
             </Grid>
             <Grid
-              row={size.gridRow}
-              col={size.gridCol}
+              row={gridRow}
+              col={gridCol}
               width={cellWidth}
               height={cellHeight}
               gap={cellGap}
             >
               {state.cardSlots.map((card, index) => {
-                const { row, col } = getGridIndexFromLineIndex(
-                  index,
-                  size.gridCol
-                );
+                const { row, col } = getGridIndexFromLineIndex(index, gridCol);
                 return (
                   card && (
                     <Cell
