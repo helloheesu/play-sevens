@@ -59,6 +59,10 @@ const Cell = styled.div`
   width: ${CELL_WIDTH_PX}px;
   height: ${CELL_HEIGHT_PX}px;
 `;
+const NextValueDisplay = styled.div`
+  transform: scale(0.7);
+  margin-bottom: 1rem;
+`;
 
 function App() {
   const gridContainerRef = useRef<HTMLDivElement>(null);
@@ -158,9 +162,9 @@ function App() {
         onUp={onUp}
       >
         <Wrapper>
-          <Cell style={{ transform: 'scale(0.7)' }}>
+          <NextValueDisplay>
             <Card value={state.nextNewCardValue} />
-          </Cell>
+          </NextValueDisplay>
           {state.isGameEnded && <Modal score={calculateTotalScore()} />}
           <Container ref={gridContainerRef}>
             <Grid row={gridRow} col={gridCol} style={{ position: 'absolute' }}>
