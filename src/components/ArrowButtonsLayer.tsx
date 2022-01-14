@@ -27,6 +27,43 @@ const Arrow = styled.div`
   height: 3rem;
   border-radius: 0.3rem;
   background-color: ${(props) => props.theme.background.main};
+  box-sizing: border-box;
+  &::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 0.5em solid transparent;
+    border-bottom: 0.5em solid transparent;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    box-sizing: border-box;
+    position: relative;
+  }
+`;
+const RightArrow = styled(Arrow)`
+  &::after {
+    border-left: 1em solid ${(props) => props.theme.black.main};
+    left: 0.3em;
+  }
+`;
+const LeftArrow = styled(Arrow)`
+  &::after {
+    border-right: 1em solid ${(props) => props.theme.black.main};
+    right: 0.3em;
+  }
+`;
+const UpArrow = styled(Arrow)`
+  &::after {
+    border-bottom: 1em solid ${(props) => props.theme.black.main};
+    bottom: 0.3em;
+  }
+`;
+const DownArrow = styled(Arrow)`
+  &::after {
+    border-top: 1em solid ${(props) => props.theme.black.main};
+    top: 0.3em;
+  }
 `;
 interface ButtonProps {
   onClick?: () => void;
@@ -39,7 +76,7 @@ const RightButton = ({ onClick }: ButtonProps) => {
         gridArea: 'right',
       }}
     >
-      <Arrow>▶️</Arrow>
+      <RightArrow />
     </Container>
   );
 };
@@ -51,7 +88,7 @@ const LeftButton = ({ onClick }: ButtonProps) => {
         gridArea: 'left',
       }}
     >
-      <Arrow>◀️</Arrow>
+      <LeftArrow />
     </Container>
   );
 };
@@ -63,7 +100,7 @@ const DownButton = ({ onClick }: ButtonProps) => {
         gridArea: 'down',
       }}
     >
-      <Arrow>🔽</Arrow>
+      <DownArrow />
     </Container>
   );
 };
@@ -75,7 +112,7 @@ const UpButton = ({ onClick }: ButtonProps) => {
         gridArea: 'up',
       }}
     >
-      <Arrow>🔼</Arrow>
+      <UpArrow />
     </Container>
   );
 };
