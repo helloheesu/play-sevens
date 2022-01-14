@@ -11,7 +11,18 @@ import useResponsiveGrid from '../useResponsiveGrid';
 import ScoreBoard from './ScoreBoard';
 import { ScoreInfo } from '../fbase';
 
-const Wrapper = styled.div`
+// [NOTE] 100vh doesn't work properly on mobile
+interface WrapperProps {
+  windowHeight: number;
+}
+const Wrapper = styled.div<WrapperProps>`
+  width: 100vw;
+  height: ${(props) => props.windowHeight}px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const ContentWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -21,7 +32,7 @@ const Wrapper = styled.div`
   padding: 2rem;
   box-sizing: border-box;
 `;
-const Container = styled.div`
+const GridContainer = styled.div`
   background-color: ${(props) => props.theme.background.main};
   position: relative;
   width: 100%;
@@ -57,6 +68,15 @@ const NextValueDisplay = styled.div`
 `;
 
 function App() {
+  const [height, setHeight] = useState(window.innerHeight);
+  useEffect(() => {
+    const onResize = () => {
+      setHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
     useResponsiveGrid(gridContainerRef);
@@ -143,84 +163,89 @@ function App() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <ArrowButtonsLayer
-        onDown={onDown}
-        onLeft={onLeft}
-        onRight={onRight}
-        onUp={onUp}
-      >
-        <Wrapper>
-          <NextValueDisplay>
-            <Card
-              value={state.nextNewCardValue}
-              width={cellWidth}
-              height={cellHeight}
-            />
-          </NextValueDisplay>
-          {isModalOn && (
-            <Modal onClose={() => setIsModalOn(false)}>
-              {isNameFormOn && (
-                <ScoreNameForm
-                  score={calculateTotalScore()}
-                  row={gridRow}
-                  col={gridCol}
-                  onSubmit={onSubmit}
-                />
-              )}
-              <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
-            </Modal>
-          )}
-          <Container ref={gridContainerRef}>
-            <Grid
-              row={gridRow}
-              col={gridCol}
-              width={cellWidth}
-              height={cellHeight}
-              gap={cellGap}
-              style={{ position: 'absolute' }}
-            >
-              {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
-                <Cell key={i} width={cellWidth} height={cellHeight} />
-              ))}
-            </Grid>
-            <Grid
-              row={gridRow}
-              col={gridCol}
-              width={cellWidth}
-              height={cellHeight}
-              gap={cellGap}
-            >
-              {state.cardSlots.map((card, index) => {
-                const { row, col } = getGridIndexFromLineIndex(index, gridCol);
-                return (
-                  card && (
-                    <Cell
-                      key={card.id}
-                      width={cellWidth}
-                      height={cellHeight}
-                      style={{
-                        gridRow: `${row + 1}/${row + 2}`,
-                        gridColumn: `${col + 1}/${col + 2}`,
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        score={
-                          !state.isGameEnded
-                            ? undefined
-                            : calculateScore(card.value)
-                        }
+      <Wrapper windowHeight={height}>
+        <ArrowButtonsLayer
+          onDown={onDown}
+          onLeft={onLeft}
+          onRight={onRight}
+          onUp={onUp}
+        >
+          <ContentWrapper>
+            <NextValueDisplay>
+              <Card
+                value={state.nextNewCardValue}
+                width={cellWidth}
+                height={cellHeight}
+              />
+            </NextValueDisplay>
+            {isModalOn && (
+              <Modal onClose={() => setIsModalOn(false)}>
+                {isNameFormOn && (
+                  <ScoreNameForm
+                    score={calculateTotalScore()}
+                    row={gridRow}
+                    col={gridCol}
+                    onSubmit={onSubmit}
+                  />
+                )}
+                <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
+              </Modal>
+            )}
+            <GridContainer ref={gridContainerRef}>
+              <Grid
+                row={gridRow}
+                col={gridCol}
+                width={cellWidth}
+                height={cellHeight}
+                gap={cellGap}
+                style={{ position: 'absolute' }}
+              >
+                {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
+                  <Cell key={i} width={cellWidth} height={cellHeight} />
+                ))}
+              </Grid>
+              <Grid
+                row={gridRow}
+                col={gridCol}
+                width={cellWidth}
+                height={cellHeight}
+                gap={cellGap}
+              >
+                {state.cardSlots.map((card, index) => {
+                  const { row, col } = getGridIndexFromLineIndex(
+                    index,
+                    gridCol
+                  );
+                  return (
+                    card && (
+                      <Cell
+                        key={card.id}
                         width={cellWidth}
                         height={cellHeight}
-                      />
-                    </Cell>
-                  )
-                );
-              })}
-            </Grid>
-          </Container>
-        </Wrapper>
-      </ArrowButtonsLayer>
+                        style={{
+                          gridRow: `${row + 1}/${row + 2}`,
+                          gridColumn: `${col + 1}/${col + 2}`,
+                        }}
+                      >
+                        <Card
+                          value={card.value}
+                          score={
+                            !state.isGameEnded
+                              ? undefined
+                              : calculateScore(card.value)
+                          }
+                          width={cellWidth}
+                          height={cellHeight}
+                        />
+                      </Cell>
+                    )
+                  );
+                })}
+              </Grid>
+            </GridContainer>
+          </ContentWrapper>
+        </ArrowButtonsLayer>
+      </Wrapper>
     </ThemeProvider>
   );
 }
