@@ -9,6 +9,12 @@ const List = styled.ul`
   text-align: center;
   font-size: 0.8em;
 `;
+const First = styled.p`
+  font-size: 0.6em;
+  color: ${(props) => props.theme.red.darken};
+  text-align: center;
+  margin-top: 0.5em;
+`;
 
 interface Props {
   row: number;
@@ -21,6 +27,7 @@ type LoadingState = 'initial' | 'loading' | 'loaded'; // shoudl be more about er
 const ScoreBoard = ({ row, col, username, score }: Props) => {
   const [loadingState, setLoadingState] = useState<LoadingState>('initial');
   const [scores, setScores] = useState<ScoreInfo[]>([]);
+  const [isFirstUser, setIsFirstUser] = useState(false);
   useEffect(() => {
     setLoadingState('loading');
     getScores(row, col).then((scores) => {
@@ -34,6 +41,10 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
     }
     if (!username || typeof score !== 'number') {
       return;
+    }
+
+    if (!scores.length) {
+      setIsFirstUser(true);
     }
 
     const index = scores.findIndex((info) => info.username === username);
@@ -62,6 +73,9 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
   return (
     <div>
       <Title>Score Board</Title>
+      {isFirstUser && (
+        <First>You're the first recorder of this score! 🎉</First>
+      )}
       <List>
         {scores.map(({ username, score }) => (
           <li key={username}>
