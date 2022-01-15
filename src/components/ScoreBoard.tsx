@@ -1,6 +1,8 @@
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getScores, ScoreInfo } from '../fbase';
+import { getAllScores, getScores, ScoreInfo } from '../fbase';
 
 const Container = styled.div`
   display: flex;
@@ -9,9 +11,25 @@ const Container = styled.div`
 `;
 const Title = styled.p`
   text-align: center;
+  margin-bottom: 1rem;
 `;
 const List = styled.ul`
   text-align: center;
+  font-size: 0.8em;
+`;
+const Item = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+`;
+const Username = styled.span`
+  color: ${(props) => props.theme.black.main};
+`;
+const Score = styled.span`
+  color: ${(props) => props.theme.blue.main};
+`;
+const Size = styled.span`
+  color: ${(props) => props.theme.background.darken};
   font-size: 0.8em;
 `;
 const First = styled.p`
@@ -26,7 +44,9 @@ const MoreButton = styled.button`
   border: none;
   padding: 0.6em 1em;
   border-radius: 3em;
+  margin-top: 1em;
 `;
+const LoadingSpinner = () => <FontAwesomeIcon icon={faSpinner} />;
 
 interface Props {
   row: number;
@@ -75,27 +95,56 @@ const ScoreBoard = ({ row, col, username, score }: Props) => {
     }
   }, [loadingState, username, scores, score]);
 
+  const [shouldShowAllSize, setShouldShowAllSize] = useState(false);
+  const [allScores, setAllScores] = useState<ScoreInfo[]>([]);
+  const handleClickMore = () => {
+    setShouldShowAllSize(true);
+    setLoadingState('loading');
+    getAllScores().then((scores) => {
+      setAllScores(scores);
+      setLoadingState('loaded');
+    });
+  };
+
   if (!username) {
     return null;
   }
   if (loadingState !== 'loaded') {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
-  return (
-    <Container>
-      <Title>Score Board</Title>
-      {isFirstUser && <First>You're the first recorder of this size! 🎉</First>}
-      <List>
-        {scores.map(({ username, score }) => (
-          <li key={username}>
-            {username}: {score}
-          </li>
-        ))}
-      </List>
-      <MoreButton>show all scores</MoreButton>
-    </Container>
-  );
+  if (shouldShowAllSize) {
+    return (
+      <Container>
+        <Title>All Scores</Title>
+        <List>
+          {allScores.map(({ username, score, size }) => (
+            <Item key={username}>
+              <Username>{username}</Username>: <Score>{score}</Score>{' '}
+              <Size>in {size}</Size>
+            </Item>
+          ))}
+        </List>
+      </Container>
+    );
+  } else {
+    return (
+      <Container>
+        <Title>Score Board</Title>
+        {isFirstUser && (
+          <First>You're the first recorder of this size! 🎉</First>
+        )}
+        <List>
+          {scores.map(({ username, score }) => (
+            <Item key={username}>
+              <Username>{username}</Username>: <Score>{score}</Score>
+            </Item>
+          ))}
+        </List>
+        <MoreButton onClick={handleClickMore}>show all scores</MoreButton>
+      </Container>
+    );
+  }
 };
 
 export default ScoreBoard;

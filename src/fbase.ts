@@ -4,9 +4,12 @@ import { getAnalytics } from 'firebase/analytics';
 import {
   arrayUnion,
   collection,
+  collectionGroup,
   doc,
+  DocumentData,
   getDocs,
   getFirestore,
+  QueryDocumentSnapshot,
   setDoc,
 } from 'firebase/firestore';
 
@@ -39,11 +42,13 @@ export const addScore = async (
   row: number,
   col: number
 ) => {
-  const userRef = doc(sizesRef, getSizeId(row, col), 'users', username);
+  const sizeId = getSizeId(row, col);
+  const userRef = doc(sizesRef, sizeId, 'users', username);
   await setDoc(
     userRef,
     {
       scores: arrayUnion(score),
+      size: sizeId,
     },
     { merge: true }
   );
@@ -51,26 +56,47 @@ export const addScore = async (
 export interface ScoreInfo {
   username: string;
   score: number;
+  size?: string;
 }
+const getScoreInfo = (doc: QueryDocumentSnapshot<DocumentData>) => {
+  const username = doc.id;
+  const { scores, size } = doc.data();
+
+  const score = scores.reduce((pv: number, cv: number) => {
+    return Math.max(pv, cv);
+  });
+
+  return { username, score, size };
+};
+const sortByScore = (scoreInfos: ScoreInfo[]) => {
+  scoreInfos.sort(({ score: scoreA }, { score: scoreB }) => {
+    return scoreB - scoreA;
+  });
+};
 export const getScores = async (row: number, col: number) => {
   const usersRef = collection(sizesRef, getSizeId(row, col), 'users');
   const snapshot = await getDocs(usersRef);
 
   const result: ScoreInfo[] = [];
   snapshot.forEach((doc) => {
-    const username = doc.id;
-    const { scores } = doc.data();
-
-    const score = scores.reduce((pv: number, cv: number) => {
-      return Math.max(pv, cv);
-    });
-
-    result.push({ username, score });
+    result.push(getScoreInfo(doc));
   });
 
-  result.sort(({ score: scoreA }, { score: scoreB }) => {
-    return scoreB - scoreA;
+  sortByScore(result);
+
+  return result;
+};
+
+export const getAllScores = async () => {
+  const usersGroupsRef = collectionGroup(db, 'users');
+  const snapshot = await getDocs(usersGroupsRef);
+
+  const result: ScoreInfo[] = [];
+  snapshot.forEach((doc) => {
+    result.push(getScoreInfo(doc));
   });
+
+  sortByScore(result);
 
   return result;
 };
