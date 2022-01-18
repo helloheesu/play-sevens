@@ -20,7 +20,7 @@ interface CardInfo {
 }
 
 type CardSlot = CardInfo | null;
-interface State {
+export interface State {
   rowSize: number;
   colSize: number;
   cardSlots: CardSlot[];
@@ -28,10 +28,13 @@ interface State {
   newCardValues: number[];
   nextNewCardValue: number;
   isGameEnded: boolean;
+  cellWidth: number;
+  cellHeight: number;
+  cellGap: number;
 }
 
 type Direction = 'left' | 'right' | 'up' | 'down';
-type Action =
+export type Action =
   | {
       type: 'restartGame';
     }
@@ -140,6 +143,7 @@ const isAnyMoveable = (
 
 const DEFAULT_ROW_SIZE = 4;
 const DEFAULT_COL_SIZE = 4;
+const DEFAULT_UNIT_SIZE = 16;
 export const getInitialState = (): State => ({
   rowSize: DEFAULT_ROW_SIZE,
   colSize: DEFAULT_COL_SIZE,
@@ -148,6 +152,9 @@ export const getInitialState = (): State => ({
   newCardValues: [1, 1, 1, 2, 2, 2, 3],
   nextNewCardValue: 0,
   isGameEnded: false,
+  cellGap: DEFAULT_UNIT_SIZE,
+  cellWidth: DEFAULT_UNIT_SIZE * 3,
+  cellHeight: DEFAULT_UNIT_SIZE * 4,
 });
 
 const reducer: Reducer<State, Action> = (state, action) => {
