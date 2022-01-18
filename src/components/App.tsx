@@ -189,12 +189,16 @@ function App() {
             {isNameFormOn && (
               <ScoreNameForm
                 score={calculateTotalScore()}
-                row={gridRow}
-                col={gridCol}
+                row={state.rowSize}
+                col={state.colSize}
                 onSubmit={onSubmit}
               />
             )}
-            <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
+            <ScoreBoard
+              row={state.rowSize}
+              col={state.colSize}
+              {...scoreBoardInfo}
+            />
           </Modal>
         )}
 
@@ -219,26 +223,31 @@ function App() {
           </UIContainer>
           <GridContainer ref={gridContainerRef}>
             <Grid
-              row={gridRow}
-              col={gridCol}
+              row={state.rowSize}
+              col={state.colSize}
               width={cellWidth}
               height={cellHeight}
               gap={cellGap}
               style={{ position: 'absolute' }}
             >
-              {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
-                <Cell key={i} width={cellWidth} height={cellHeight} />
-              ))}
+              {Array.apply(null, Array(state.rowSize * state.colSize)).map(
+                (_, i) => (
+                  <Cell key={i} width={cellWidth} height={cellHeight} />
+                )
+              )}
             </Grid>
             <Grid
-              row={gridRow}
-              col={gridCol}
+              row={state.rowSize}
+              col={state.colSize}
               width={cellWidth}
               height={cellHeight}
               gap={cellGap}
             >
               {state.cardSlots.map((card, index) => {
-                const { row, col } = getGridIndexFromLineIndex(index, gridCol);
+                const { row, col } = getGridIndexFromLineIndex(
+                  index,
+                  state.colSize
+                );
                 return (
                   card && (
                     <Cell
