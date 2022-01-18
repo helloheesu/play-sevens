@@ -10,7 +10,7 @@ import { ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import useWindowSize from '../useWindowSize';
+import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
 import ResponsiveGrid from './ResponsiveGrid';
 import ResponsiveCellGrid from './ResponsiveCellGrid';

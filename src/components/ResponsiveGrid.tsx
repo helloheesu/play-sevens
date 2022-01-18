@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import { getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
-import useResponsiveGrid from '../useResponsiveGrid';
+import useResponsiveGrid from '../hooks/useResponsiveGrid';
 import { calculateScore } from '../utils/value';
 import Card from './Card';
 
