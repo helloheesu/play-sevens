@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
 import Modal from './Modal';
-import reducer from '../reducer';
+import reducer, { getInitialState } from '../reducer';
 import { getGridIndexFromLineIndex } from '../gridToLine';
 import defaultTheme from '../theme';
 import ScoreNameForm from './ScoreNameForm';
@@ -90,15 +90,7 @@ const Cell = styled.div<{ width: number; height: number }>`
 function App() {
   const { height } = useWindowSize();
 
-  const [state, dispatch] = useReducer(reducer, {
-    rowSize: 0,
-    colSize: 0,
-    cardSlots: [],
-    initialCardCount: 1,
-    newCardValues: [1, 1, 1, 2, 2, 2, 3],
-    nextNewCardValue: 0,
-    isGameEnded: false,
-  });
+  const [state, dispatch] = useReducer(reducer, getInitialState());
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
