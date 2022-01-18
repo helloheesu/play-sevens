@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
+import {
+  DEFAULT_SCALE_UNIT,
+  HEIGHT_RATIO,
+  SMALL_SCALE_UNIT,
+  WIDTH_RATIO,
+} from '../utils/sizeConsts';
 
-const DEFAULT_SCALE_UNIT = 16;
-const SMALL_SCALE_UNIT = 12;
 const getCellSize = (scaleUnit: number) => {
   return {
     gap: scaleUnit,
-    width: scaleUnit * 3,
-    height: scaleUnit * 4,
+    width: scaleUnit * WIDTH_RATIO,
+    height: scaleUnit * HEIGHT_RATIO,
   };
 };
 const calculateGridSize = (

@@ -13,6 +13,13 @@ import {
   getRightIndex,
   getUpIndex,
 } from './utils/gridToLine';
+import {
+  DEFAULT_ROW_SIZE,
+  DEFAULT_COL_SIZE,
+  DEFAULT_UNIT_SIZE,
+  WIDTH_RATIO,
+  HEIGHT_RATIO,
+} from './utils/sizeConsts';
 
 interface CardInfo {
   id: number;
@@ -144,9 +151,6 @@ const isAnyMoveable = (
   return false;
 };
 
-const DEFAULT_ROW_SIZE = 4;
-const DEFAULT_COL_SIZE = 4;
-const DEFAULT_UNIT_SIZE = 16;
 export const getInitialState = (): State => ({
   rowSize: DEFAULT_ROW_SIZE,
   colSize: DEFAULT_COL_SIZE,
@@ -156,8 +160,8 @@ export const getInitialState = (): State => ({
   nextNewCardValue: 0,
   isGameEnded: false,
   cellGap: DEFAULT_UNIT_SIZE,
-  cellWidth: DEFAULT_UNIT_SIZE * 3,
-  cellHeight: DEFAULT_UNIT_SIZE * 4,
+  cellWidth: DEFAULT_UNIT_SIZE * WIDTH_RATIO,
+  cellHeight: DEFAULT_UNIT_SIZE * HEIGHT_RATIO,
 });
 
 const reducer: Reducer<State, Action> = (state, action) => {
