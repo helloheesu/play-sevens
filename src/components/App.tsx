@@ -12,6 +12,7 @@ import { ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
+import useWindowSize from '../useWindowSize';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -87,14 +88,7 @@ const Cell = styled.div<{ width: number; height: number }>`
 `;
 
 function App() {
-  const [height, setHeight] = useState(window.innerHeight);
-  useEffect(() => {
-    const onResize = () => {
-      setHeight(window.innerHeight);
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+  const { height } = useWindowSize();
 
   const [state, dispatch] = useReducer(reducer, {
     rowSize: 0,
