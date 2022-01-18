@@ -12,7 +12,7 @@ import {
   getLeftIndex,
   getRightIndex,
   getUpIndex,
-} from './gridToLine';
+} from './utils/gridToLine';
 
 interface CardInfo {
   id: number;
@@ -39,9 +39,12 @@ export type Action =
       type: 'restartGame';
     }
   | {
-      type: 'changeGridSize';
-      row: number;
-      col: number;
+      type: 'changeSize';
+      rowSize?: number;
+      colSize?: number;
+      cellWidth?: number;
+      cellHeight?: number;
+      cellGap?: number;
     }
   | { type: 'merge'; direction: Direction };
 
@@ -174,12 +177,13 @@ const reducer: Reducer<State, Action> = (state, action) => {
         isGameEnded: false,
       };
     }
-    case 'changeGridSize':
+    case 'changeSize': {
+      const { type, ...sizes } = action;
       return {
         ...state,
-        rowSize: action.row,
-        colSize: action.col,
+        ...sizes,
       };
+    }
     case 'merge': {
       const newCardSlots = [...state.cardSlots];
       let compareReduce: CompareReducer<boolean>,

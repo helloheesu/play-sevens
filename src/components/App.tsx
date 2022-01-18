@@ -11,8 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '../useWindowSize';
-import { calculateScore } from '../value';
+import { calculateScore } from '../utils/value';
 import ResponsiveGrid from './ResponsiveGrid';
+import ResponsiveCellGrid from './ResponsiveCellGrid';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -183,7 +184,7 @@ function App() {
             </UIButton>
           </UIContainer>
           <GridContainer ref={gridContainerRef}>
-            <ResponsiveGrid
+            <ResponsiveCellGrid
               state={state}
               dispatch={dispatch}
               gridContainerRef={gridContainerRef}

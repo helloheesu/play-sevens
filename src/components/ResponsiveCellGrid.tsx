@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import { getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
-import useResponsiveGrid from '../useResponsiveGrid';
+import useResponsiveCell from '../useResponsiveCell';
 import { calculateScore } from '../utils/value';
 import Card from './Card';
 
@@ -36,13 +36,16 @@ interface Props {
   dispatch: (value: Action) => void;
   gridContainerRef: React.RefObject<HTMLDivElement>;
 }
-const ResponsiveGrid = ({ state, dispatch, gridContainerRef }: Props) => {
-  const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
-    useResponsiveGrid(gridContainerRef, state.isGameEnded === false);
+const ResponsiveCellGrid = ({ state, dispatch, gridContainerRef }: Props) => {
+  const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
+    gridContainerRef,
+    state.rowSize,
+    state.colSize
+  );
 
   useEffect(() => {
-    dispatch({ type: 'changeSize', rowSize: gridRow, colSize: gridCol });
-  }, [gridRow, gridCol, dispatch]);
+    dispatch({ type: 'changeSize', cellWidth, cellHeight, cellGap });
+  }, [cellGap, cellHeight, cellWidth, dispatch]);
 
   return (
     <>
@@ -96,4 +99,4 @@ const ResponsiveGrid = ({ state, dispatch, gridContainerRef }: Props) => {
   );
 };
 
-export default ResponsiveGrid;
+export default ResponsiveCellGrid;
