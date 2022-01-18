@@ -138,6 +138,18 @@ const isAnyMoveable = (
   return false;
 };
 
+const DEFAULT_ROW_SIZE = 4;
+const DEFAULT_COL_SIZE = 4;
+export const getInitialState = (): State => ({
+  rowSize: DEFAULT_ROW_SIZE,
+  colSize: DEFAULT_COL_SIZE,
+  cardSlots: [],
+  initialCardCount: 1,
+  newCardValues: [1, 1, 1, 2, 2, 2, 3],
+  nextNewCardValue: 0,
+  isGameEnded: false,
+});
+
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'restartGame': {
