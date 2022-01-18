@@ -93,12 +93,18 @@ function App() {
   const [state, dispatch] = useReducer(reducer, getInitialState());
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
-    useResponsiveGrid(gridContainerRef, state.isGameEnded === false);
 
-  useEffect(() => {
-    dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
-  }, [gridRow, gridCol]);
+  // temp
+  const cellGap = 16;
+  const cellWidth = cellGap * 3;
+  const cellHeight = cellGap * 4;
+
+  // const { gridRow, gridCol, cellWidth, cellHeight, cellGap } =
+  //   useResponsiveGrid(gridContainerRef, state.isGameEnded === false);
+
+  // useEffect(() => {
+  //   dispatch({ type: 'changeGridSize', row: gridRow, col: gridCol });
+  // }, [gridRow, gridCol]);
 
   useEffect(() => {
     dispatch({ type: 'restartGame' });
