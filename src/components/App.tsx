@@ -13,6 +13,11 @@ import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
 import ResponsiveCellGrid from './ResponsiveCellGrid';
+import {
+  DEFAULT_SCALE_UNIT,
+  HEIGHT_RATIO,
+  WIDTH_RATIO,
+} from '../utils/sizeConsts';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -171,8 +176,8 @@ function App() {
             <NextValueDisplay>
               <Card
                 value={state.nextNewCardValue}
-                width={state.cellWidth}
-                height={state.cellHeight}
+                width={DEFAULT_SCALE_UNIT * WIDTH_RATIO}
+                height={DEFAULT_SCALE_UNIT * HEIGHT_RATIO}
               />
             </NextValueDisplay>
             <UIButton onClick={handleReset}>
