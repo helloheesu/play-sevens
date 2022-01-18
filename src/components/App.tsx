@@ -58,6 +58,8 @@ const GridContainer = styled.div`
   position: relative;
   width: 100%;
   flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
 `;
 
 const Grid = styled.div<{
