@@ -5,13 +5,13 @@ import Modal from './Modal';
 import reducer from '../reducer';
 import { getGridIndexFromLineIndex } from '../gridToLine';
 import defaultTheme from '../theme';
-import ArrowButtonsLayer from './ArrowButtonsLayer';
 import ScoreNameForm from './ScoreNameForm';
 import useResponsiveGrid from '../useResponsiveGrid';
 import ScoreBoard from './ScoreBoard';
 import { ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { useSwipeable } from 'react-swipeable';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -121,6 +121,13 @@ function App() {
   const onUp = () => dispatch({ type: 'merge', direction: 'up' });
   const onDown = () => dispatch({ type: 'merge', direction: 'down' });
 
+  const handlers = useSwipeable({
+    onSwipedLeft: onLeft,
+    onSwipedRight: onRight,
+    onSwipedUp: onUp,
+    onSwipedDown: onDown,
+  });
+
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
@@ -202,85 +209,76 @@ function App() {
             <ScoreBoard row={gridRow} col={gridCol} {...scoreBoardInfo} />
           </Modal>
         )}
-        <ArrowButtonsLayer
-          onDown={onDown}
-          onLeft={onLeft}
-          onRight={onRight}
-          onUp={onUp}
-        >
-          <ContentWrapper>
-            <UIContainer>
-              <UIButton onClick={() => alert('메뉴는 아직 만드는 중이예요 :p')}>
-                <FontAwesomeIcon icon={faList} />
-              </UIButton>
-              <NextValueDisplay>
-                <Card
-                  value={state.nextNewCardValue}
-                  width={cellWidth}
-                  height={cellHeight}
-                />
-              </NextValueDisplay>
-              <UIButton onClick={handleReset}>
-                <FontAwesomeIcon
-                  icon={faRedoAlt}
-                  style={{ transform: 'scaleX(-1)' }}
-                />
-              </UIButton>
-            </UIContainer>
-            <GridContainer ref={gridContainerRef}>
-              <Grid
-                row={gridRow}
-                col={gridCol}
+
+        <ContentWrapper {...handlers}>
+          <UIContainer>
+            <UIButton onClick={() => alert('메뉴는 아직 만드는 중이예요 :p')}>
+              <FontAwesomeIcon icon={faList} />
+            </UIButton>
+            <NextValueDisplay>
+              <Card
+                value={state.nextNewCardValue}
                 width={cellWidth}
                 height={cellHeight}
-                gap={cellGap}
-                style={{ position: 'absolute' }}
-              >
-                {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
-                  <Cell key={i} width={cellWidth} height={cellHeight} />
-                ))}
-              </Grid>
-              <Grid
-                row={gridRow}
-                col={gridCol}
-                width={cellWidth}
-                height={cellHeight}
-                gap={cellGap}
-              >
-                {state.cardSlots.map((card, index) => {
-                  const { row, col } = getGridIndexFromLineIndex(
-                    index,
-                    gridCol
-                  );
-                  return (
-                    card && (
-                      <Cell
-                        key={card.id}
+              />
+            </NextValueDisplay>
+            <UIButton onClick={handleReset}>
+              <FontAwesomeIcon
+                icon={faRedoAlt}
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            </UIButton>
+          </UIContainer>
+          <GridContainer ref={gridContainerRef}>
+            <Grid
+              row={gridRow}
+              col={gridCol}
+              width={cellWidth}
+              height={cellHeight}
+              gap={cellGap}
+              style={{ position: 'absolute' }}
+            >
+              {Array.apply(null, Array(gridRow * gridCol)).map((_, i) => (
+                <Cell key={i} width={cellWidth} height={cellHeight} />
+              ))}
+            </Grid>
+            <Grid
+              row={gridRow}
+              col={gridCol}
+              width={cellWidth}
+              height={cellHeight}
+              gap={cellGap}
+            >
+              {state.cardSlots.map((card, index) => {
+                const { row, col } = getGridIndexFromLineIndex(index, gridCol);
+                return (
+                  card && (
+                    <Cell
+                      key={card.id}
+                      width={cellWidth}
+                      height={cellHeight}
+                      style={{
+                        gridRow: `${row + 1}/${row + 2}`,
+                        gridColumn: `${col + 1}/${col + 2}`,
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        score={
+                          !state.isGameEnded
+                            ? undefined
+                            : calculateScore(card.value)
+                        }
                         width={cellWidth}
                         height={cellHeight}
-                        style={{
-                          gridRow: `${row + 1}/${row + 2}`,
-                          gridColumn: `${col + 1}/${col + 2}`,
-                        }}
-                      >
-                        <Card
-                          value={card.value}
-                          score={
-                            !state.isGameEnded
-                              ? undefined
-                              : calculateScore(card.value)
-                          }
-                          width={cellWidth}
-                          height={cellHeight}
-                        />
-                      </Cell>
-                    )
-                  );
-                })}
-              </Grid>
-            </GridContainer>
-          </ContentWrapper>
-        </ArrowButtonsLayer>
+                      />
+                    </Cell>
+                  )
+                );
+              })}
+            </Grid>
+          </GridContainer>
+        </ContentWrapper>
       </Wrapper>
     </ThemeProvider>
   );
