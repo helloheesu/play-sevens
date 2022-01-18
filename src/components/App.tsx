@@ -12,7 +12,6 @@ import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
-import ResponsiveGrid from './ResponsiveGrid';
 import ResponsiveCellGrid from './ResponsiveCellGrid';
 
 // [NOTE] 100vh doesn't work properly on mobile

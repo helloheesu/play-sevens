@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import {
+  GAP_RATIO,
+  WIDTH_RATIO,
+  HEIGHT_RATIO,
+  DEFAULT_SCALE_UNIT,
+} from '../utils/sizeConsts';
 
-const DEFAULT_SCALE_UNIT = 16;
-const WIDTH_RATIO = 3;
-const HEIGHT_RATIO = 4;
-const GAP_RATIO = 1;
 const calculateScale = (
   containerWidth: number,
   containerHeight: number,
