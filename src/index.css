@@ -3,7 +3,6 @@ body {
   padding: 0;
   background-color: #fafafa;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  touch-action: none;
 }
 p {
   margin: 0;
@@ -12,4 +11,13 @@ ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
+}
+.touchaction {
+  touch-action: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

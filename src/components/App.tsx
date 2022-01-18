@@ -212,7 +212,7 @@ function App() {
           </Modal>
         )}
 
-        <ContentWrapper {...handlers}>
+        <ContentWrapper {...handlers} className="touchaction">
           <UIContainer>
             <UIButton onClick={() => alert('메뉴는 아직 만드는 중이예요 :p')}>
               <FontAwesomeIcon icon={faList} />
