@@ -46,8 +46,8 @@ interface Props {
 }
 const INPUT_ID = 'score-submit-name';
 const STORAGE_KEY = 'username';
-const storedUsername = localStorage.getItem(STORAGE_KEY);
 const NameForm = ({ onSubmit }: Props) => {
+  const storedUsername = localStorage.getItem(STORAGE_KEY);
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
