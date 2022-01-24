@@ -6,7 +6,7 @@ import reducer, { getInitialState } from '../reducer';
 import defaultTheme from '../theme';
 import ScoreNameForm from './ScoreNameForm';
 import ScoreBoard from './ScoreBoard';
-import { ScoreInfo } from '../fbase';
+import { logAnalytics, ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
@@ -131,12 +131,16 @@ function App() {
   const [scoreBoardInfo, setScoreBoardInfo] = useState<ScoreInfo | null>();
 
   useEffect(() => {
+    if (state.isGameEnded) {
+      logAnalytics('game ended');
+    }
     setIsNameFormOn(state.isGameEnded);
     setIsModalOn(state.isGameEnded);
   }, [state.isGameEnded]);
   const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
     setScoreBoardInfo({ username, score });
+    logAnalytics('submit score');
   };
   const handleClose = () => {
     setIsModalOn(false);
@@ -144,6 +148,7 @@ function App() {
   };
 
   const handleReset = () => {
+    logAnalytics('restart game');
     dispatch({ type: 'restartGame' });
   };
 
