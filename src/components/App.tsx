@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Card from './Card';
 import Modal from './Modal';
@@ -71,6 +71,7 @@ function App() {
   const { height } = useWindowSize();
 
   const [state, dispatch] = useReducer(reducer, getInitialState());
+  const [score, setScore] = useState<number | null>(null);
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
@@ -135,7 +136,7 @@ function App() {
     return () => document.removeEventListener('keyup', handleKeyUp);
   }, []);
 
-  const calculateTotalScore = (): number => {
+  const calculateTotalScore = useCallback((): number => {
     const totalScore = state.cardSlots.reduce((score, card) => {
       if (!card) {
         return score;
@@ -145,19 +146,22 @@ function App() {
     }, 0);
 
     return totalScore;
-  };
+  }, [state.cardSlots]);
 
   const [isModalOn, setIsModalOn] = useState(false);
   const [isNameFormOn, setIsNameFormOn] = useState(false);
   const [scoreBoardInfo, setScoreBoardInfo] = useState<ScoreInfo | null>();
 
   useEffect(() => {
-    if (state.isGameEnded) {
-      logAnalytics('game ended');
-    }
+    setScore(state.isGameEnded ? calculateTotalScore() : null);
+    state.isGameEnded &&
+      logAnalytics('game ended', {
+        score: score,
+      });
+
     setIsNameFormOn(state.isGameEnded);
     setIsModalOn(state.isGameEnded);
-  }, [state.isGameEnded]);
+  }, [calculateTotalScore, score, state.isGameEnded]);
   const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
     setScoreBoardInfo({ username, score });
@@ -166,6 +170,7 @@ function App() {
   const handleClose = () => {
     setIsModalOn(false);
     setScoreBoardInfo(null);
+    logAnalytics('close modal');
   };
 
   const handleReset = () => {
@@ -180,7 +185,7 @@ function App() {
           <Modal onClose={handleClose}>
             {isNameFormOn && (
               <ScoreNameForm
-                score={calculateTotalScore()}
+                score={Number(score)}
                 row={state.rowSize}
                 col={state.colSize}
                 onSubmit={onSubmit}
