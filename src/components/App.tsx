@@ -78,10 +78,31 @@ function App() {
     dispatch({ type: 'restartGame' });
   }, []);
 
-  const onLeft = () => dispatch({ type: 'merge', direction: 'left' });
-  const onRight = () => dispatch({ type: 'merge', direction: 'right' });
-  const onUp = () => dispatch({ type: 'merge', direction: 'up' });
-  const onDown = () => dispatch({ type: 'merge', direction: 'down' });
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      logAnalytics('page unload');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  const onLeft = () => {
+    dispatch({ type: 'merge', direction: 'left' });
+    logAnalytics('move left');
+  };
+  const onRight = () => {
+    dispatch({ type: 'merge', direction: 'right' });
+    logAnalytics('move right');
+  };
+  const onUp = () => {
+    dispatch({ type: 'merge', direction: 'up' });
+    logAnalytics('move up');
+  };
+  const onDown = () => {
+    dispatch({ type: 'merge', direction: 'down' });
+    logAnalytics('move down');
+  };
 
   const handlers = useSwipeable({
     onSwipedLeft: onLeft,
