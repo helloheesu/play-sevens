@@ -154,10 +154,7 @@ function App() {
 
   useEffect(() => {
     setScore(state.isGameEnded ? calculateTotalScore() : null);
-    state.isGameEnded &&
-      logAnalytics('game ended', {
-        score: score,
-      });
+    state.isGameEnded && logAnalytics('game ended', { score });
 
     setIsNameFormOn(state.isGameEnded);
     setIsModalOn(state.isGameEnded);
@@ -165,7 +162,7 @@ function App() {
   const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
     setScoreBoardInfo({ username, score });
-    logAnalytics('submit score');
+    logAnalytics('submit score', { username });
   };
   const handleClose = () => {
     setIsModalOn(false);
