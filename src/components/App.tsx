@@ -162,7 +162,7 @@ function App() {
   const onSubmit = (username: string, score: number) => {
     setIsNameFormOn(false);
     setScoreBoardInfo({ username, score });
-    logAnalytics('submit score', { username });
+    logAnalytics('post_score', { username, score });
   };
   const handleClose = () => {
     setIsModalOn(false);
