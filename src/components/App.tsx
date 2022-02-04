@@ -203,7 +203,7 @@ function App() {
             </UIButton>
             <NextValueDisplay>
               <Card
-                value={state.nextNewCardValue}
+                value={state.newCardValues[0]}
                 width={DEFAULT_SCALE_UNIT * WIDTH_RATIO}
                 height={DEFAULT_SCALE_UNIT * HEIGHT_RATIO}
               />
