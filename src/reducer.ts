@@ -13,6 +13,7 @@ import {
   getRightIndex,
   getUpIndex,
 } from './utils/gridToLine';
+import { getInitialCardValues } from './utils/newCardValue';
 import {
   DEFAULT_ROW_SIZE,
   DEFAULT_COL_SIZE,
@@ -33,7 +34,6 @@ export interface State {
   cardSlots: CardSlot[];
   initialCardCount: number;
   newCardValues: number[];
-  nextNewCardValue: number;
   isGameEnded: boolean;
   cellWidth: number;
   cellHeight: number;
@@ -54,11 +54,6 @@ export type Action =
       cellGap?: number;
     }
   | { type: 'merge'; direction: Direction };
-
-const pickRandomValue = (values: number[]) => {
-  const randomIndex = Math.floor(Math.random() * values.length);
-  return values[randomIndex];
-};
 
 let newCardId = 0;
 const getNewCard = (value: number): CardSlot => {
@@ -156,8 +151,7 @@ export const getInitialState = (): State => ({
   colSize: DEFAULT_COL_SIZE,
   cardSlots: [],
   initialCardCount: 1,
-  newCardValues: [1, 1, 1, 2, 2, 2, 3],
-  nextNewCardValue: 0,
+  newCardValues: getInitialCardValues(),
   isGameEnded: false,
   cellGap: DEFAULT_UNIT_SIZE,
   cellWidth: DEFAULT_UNIT_SIZE * WIDTH_RATIO,
@@ -168,7 +162,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'restartGame': {
       const initialCardSlots = new Array(state.rowSize * state.colSize);
-      const newValue = pickRandomValue(state.newCardValues);
+      const newValues = getInitialCardValues();
+      const newValue = newValues[0];
       const initialCardInfo = { row: 2, col: 1, value: newValue };
       initialCardSlots[
         getIndex(initialCardInfo.row, initialCardInfo.col, state.colSize)
@@ -177,7 +172,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         cardSlots: initialCardSlots,
-        nextNewCardValue: pickRandomValue(state.newCardValues),
+        newCardValues: newValues.slice(1),
         isGameEnded: false,
       };
     }
@@ -294,11 +289,15 @@ const reducer: Reducer<State, Action> = (state, action) => {
         false
       );
 
-      let nextNewCardValue = state.nextNewCardValue;
+      let newCardValues = state.newCardValues.slice(0);
       if (hasAnyMoved) {
         const newCardIndex = getNewCardIndex(newCardSlots);
-        newCardSlots[newCardIndex] = getNewCard(state.nextNewCardValue);
-        nextNewCardValue = pickRandomValue(state.newCardValues);
+        newCardSlots[newCardIndex] = getNewCard(state.newCardValues[0]);
+        if (state.newCardValues.length > 1) {
+          newCardValues = newCardValues.slice(1);
+        } else {
+          newCardValues = getInitialCardValues();
+        }
       }
 
       const isGameEnded =
@@ -307,7 +306,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         cardSlots: newCardSlots,
-        nextNewCardValue,
+        newCardValues,
         isGameEnded,
       };
     }
