@@ -121,7 +121,7 @@ function App() {
     }
   };
   const [isAnimating, setIsAnimating] = useState(false);
-  const SWIPE_THROTTLE = 30;
+  const SWIPE_THROTTLE = 10;
   const onSwiped: SwipeCallback = ({ dir }) => {
     if (deltaX < SWIPE_THROTTLE && deltaY < SWIPE_THROTTLE) {
       setIsMoving(false);
@@ -132,7 +132,7 @@ function App() {
         setIsAnimating(false);
         setIsMoving(false);
         onMove(dir.toLowerCase() as Direction);
-      }, 300);
+      }, 30);
     }
   };
   const handlers = useSwipeable({
