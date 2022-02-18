@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { IsMoveable } from '../reducer';
+import { IsMoveable } from '../utils/merge';
 import { ColorKey } from '../theme';
 import { Direction } from '../utils/gridToLine';
 
