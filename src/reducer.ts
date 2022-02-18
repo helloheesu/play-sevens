@@ -18,7 +18,6 @@ import {
   IsMoveable,
   isMoveable,
   mergeCardIfPossible,
-  updateAdjacentMoveable,
   updateMoveable,
 } from './utils/merge';
 import { getInitialCardValues } from './utils/newCardValue';
@@ -216,7 +215,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
       let newCardValues = state.newCardValues.slice(0);
       if (hasAnyMoved) {
         const newCardIndex = getNewCardIndex(newCardSlots);
-        updateMoveable(newCardSlots, state.rowSize, state.colSize);
         newCardSlots[newCardIndex] = {
           value: state.newCardValues[0],
           id: getNewCardId(),
@@ -227,12 +225,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
             state.colSize
           ),
         };
-        updateAdjacentMoveable(
-          newCardSlots,
-          newCardIndex,
-          state.rowSize,
-          state.colSize
-        );
+        updateMoveable(newCardSlots, state.rowSize, state.colSize);
 
         if (state.newCardValues.length > 1) {
           newCardValues = newCardValues.slice(1);
