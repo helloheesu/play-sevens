@@ -63,7 +63,6 @@ const ResponsiveCellGrid = ({
 
   return (
     <>
-      {' '}
       <Grid
         row={state.rowSize}
         col={state.colSize}
