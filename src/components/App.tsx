@@ -9,7 +9,7 @@ import ScoreBoard from './ScoreBoard';
 import { logAnalytics, ScoreInfo } from '../fbase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { useSwipeable } from 'react-swipeable';
+import { SwipeCallback, useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
 import ResponsiveCellGrid from './ResponsiveCellGrid';
@@ -18,6 +18,7 @@ import {
   HEIGHT_RATIO,
   WIDTH_RATIO,
 } from '../utils/sizeConsts';
+import { Direction } from '../utils/gridToLine';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -88,44 +89,32 @@ function App() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  const onLeft = () => {
-    dispatch({ type: 'merge', direction: 'left' });
-    logAnalytics('move left');
+  const onMove = (direction: Direction) => {
+    dispatch({ type: 'merge', direction: direction });
+    logAnalytics(`move ${direction}`);
   };
-  const onRight = () => {
-    dispatch({ type: 'merge', direction: 'right' });
-    logAnalytics('move right');
-  };
-  const onUp = () => {
-    dispatch({ type: 'merge', direction: 'up' });
-    logAnalytics('move up');
-  };
-  const onDown = () => {
-    dispatch({ type: 'merge', direction: 'down' });
-    logAnalytics('move down');
+  const onSwiped: SwipeCallback = ({ dir }) => {
+    onMove(dir.toLowerCase() as Direction);
   };
 
   const handlers = useSwipeable({
-    onSwipedLeft: onLeft,
-    onSwipedRight: onRight,
-    onSwipedUp: onUp,
-    onSwipedDown: onDown,
+    onSwiped: onSwiped,
   });
 
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
         case 'ArrowLeft':
-          onLeft();
+          onMove('left');
           break;
         case 'ArrowRight':
-          onRight();
+          onMove('right');
           break;
         case 'ArrowUp':
-          onUp();
+          onMove('up');
           break;
         case 'ArrowDown':
-          onDown();
+          onMove('down');
           break;
         default:
           break;
