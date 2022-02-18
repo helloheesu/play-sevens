@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "threes-clone"
-  }
+    "default": "threes-clone",
+    "threes-clone": "threes-clone"
+  },
+  "targets": {}
 }
