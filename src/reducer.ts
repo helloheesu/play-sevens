@@ -1,8 +1,10 @@
 import { Reducer } from 'react';
 import {
   CompareReducer,
+  Direction,
   generateRandomColIndex,
   generateRandomRowIndex,
+  getAdjacentIndex,
   getCompareReducerFromDown,
   getCompareReducerFromLeft,
   getCompareReducerFromRight,
@@ -25,9 +27,13 @@ import {
 interface CardInfo {
   id: number;
   value: number;
+  isMoveable: IsMoveable;
 }
 
 type CardSlot = CardInfo | null;
+export type IsMoveable = {
+  [key in Direction]: boolean;
+};
 export interface State {
   rowSize: number;
   colSize: number;
@@ -40,7 +46,6 @@ export interface State {
   cellGap: number;
 }
 
-type Direction = 'left' | 'right' | 'up' | 'down';
 export type Action =
   | {
       type: 'restartGame';
@@ -56,13 +61,162 @@ export type Action =
   | { type: 'merge'; direction: Direction };
 
 let newCardId = 0;
-const getNewCard = (value: number): CardSlot => {
+const getNewCardId = () => newCardId++;
+
+const updateMoveable = (
+  cardSlots: CardSlot[],
+  rowSize: number,
+  colSize: number
+) => {
+  for (let row = 0; row < rowSize; row++) {
+    for (let col = 0; col < colSize; col++) {
+      const index = getIndex(row, col, colSize);
+      const card = cardSlots[index];
+      if (!card) {
+        continue;
+      }
+      card.isMoveable.left = isMoveableToDirection(
+        'left',
+        index,
+        cardSlots,
+        rowSize,
+        colSize
+      );
+      card.isMoveable.up = isMoveableToDirection(
+        'up',
+        index,
+        cardSlots,
+        rowSize,
+        colSize
+      );
+    }
+  }
+  for (let row = rowSize - 1; row >= 0; row--) {
+    for (let col = colSize - 1; col >= 0; col--) {
+      const index = getIndex(row, col, colSize);
+      const card = cardSlots[index];
+      if (!card) {
+        continue;
+      }
+      card.isMoveable.right = isMoveableToDirection(
+        'right',
+        index,
+        cardSlots,
+        rowSize,
+        colSize
+      );
+      card.isMoveable.down = isMoveableToDirection(
+        'down',
+        index,
+        cardSlots,
+        rowSize,
+        colSize
+      );
+    }
+  }
+};
+const getAllMoveableObj = () => ({
+  left: true,
+  right: true,
+  up: true,
+  down: true,
+});
+const isMoveableToDirection = (
+  direction: Direction,
+  index: number,
+  cardSlots: CardSlot[],
+  rowSize: number,
+  colSize: number
+): boolean => {
+  const adjacentIndex = getAdjacentIndex(
+    direction,
+    index,
+    rowSize,
+    colSize,
+    false
+  );
+  if (typeof adjacentIndex !== 'number') {
+    return false;
+  }
+  const card = cardSlots[index];
+  const adjacentCard = cardSlots[adjacentIndex];
+  if (!adjacentCard) {
+    return true;
+  }
+  if (adjacentCard.isMoveable[direction]) {
+    return true;
+  }
+  return isMergeable(card, adjacentCard);
+};
+const isMoveable = (
+  ...args: [
+    index: number,
+    cardSlots: CardSlot[],
+    rowSize: number,
+    colSize: number
+  ]
+): IsMoveable => {
   return {
-    id: newCardId++,
-    value,
+    left: isMoveableToDirection('left', ...args),
+    right: isMoveableToDirection('right', ...args),
+    up: isMoveableToDirection('up', ...args),
+    down: isMoveableToDirection('down', ...args),
   };
 };
+const updateAdjacentMoveable = (
+  cardSlots: CardSlot[],
+  index: number,
+  rowSize: number,
+  colSize: number
+) => {
+  const leftIndex = getLeftIndex(index, rowSize, colSize);
+  const leftCard = leftIndex && cardSlots[leftIndex];
+  if (leftCard) {
+    leftCard.isMoveable.right = isMoveableToDirection(
+      'right',
+      index,
+      cardSlots,
+      rowSize,
+      colSize
+    );
+  }
 
+  const rightIndex = getRightIndex(index, rowSize, colSize);
+  const rightCard = rightIndex && cardSlots[rightIndex];
+  if (rightCard) {
+    rightCard.isMoveable.left = isMoveableToDirection(
+      'left',
+      index,
+      cardSlots,
+      rowSize,
+      colSize
+    );
+  }
+
+  const upIndex = getUpIndex(index, rowSize, colSize);
+  const upCard = upIndex && cardSlots[upIndex];
+  if (upCard) {
+    upCard.isMoveable.down = isMoveableToDirection(
+      'down',
+      index,
+      cardSlots,
+      rowSize,
+      colSize
+    );
+  }
+
+  const downIndex = getDownIndex(index, rowSize, colSize);
+  const downCard = downIndex && cardSlots[downIndex];
+  if (downCard) {
+    downCard.isMoveable.up = isMoveableToDirection(
+      'up',
+      index,
+      cardSlots,
+      rowSize,
+      colSize
+    );
+  }
+};
 const isMergeable = (cardA: CardSlot, cardB: CardSlot): boolean => {
   if (!cardA || !cardB) {
     return true;
@@ -84,23 +238,17 @@ const mergeCardIfPossible = (
 
   if (upcomingCard) {
     if (previousCard) {
-      // console.log('merging', { ...previousCard }, { ...upcomingCard });
-
       if (isMergeable(previousCard, upcomingCard)) {
-        // console.log('mergeable??');
-
         cardSlots[previousIndex] = {
           ...previousCard,
           value: previousCard.value + upcomingCard.value,
         };
         cardSlots[upcomingIndex] = null;
       } else {
-        // console.log('NO');
         // do nothing
         return false;
       }
     } else {
-      // console.log('moving', previousCard, upcomingCard);
       cardSlots[previousIndex] = upcomingCard;
       cardSlots[upcomingIndex] = null;
     }
@@ -161,13 +309,17 @@ export const getInitialState = (): State => ({
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'restartGame': {
-      const initialCardSlots = new Array(state.rowSize * state.colSize);
+      const initialCardSlots = new Array<CardSlot>(
+        state.rowSize * state.colSize
+      );
       const newValues = getInitialCardValues();
       const newValue = newValues[0];
-      const initialCardInfo = { row: 2, col: 1, value: newValue };
-      initialCardSlots[
-        getIndex(initialCardInfo.row, initialCardInfo.col, state.colSize)
-      ] = getNewCard(initialCardInfo.value);
+      const newIndex = getIndex(2, 1, state.colSize);
+      initialCardSlots[newIndex] = {
+        value: newValue,
+        id: getNewCardId(),
+        isMoveable: getAllMoveableObj(),
+      };
 
       return {
         ...state,
@@ -292,7 +444,24 @@ const reducer: Reducer<State, Action> = (state, action) => {
       let newCardValues = state.newCardValues.slice(0);
       if (hasAnyMoved) {
         const newCardIndex = getNewCardIndex(newCardSlots);
-        newCardSlots[newCardIndex] = getNewCard(state.newCardValues[0]);
+        updateMoveable(newCardSlots, state.rowSize, state.colSize);
+        newCardSlots[newCardIndex] = {
+          value: state.newCardValues[0],
+          id: getNewCardId(),
+          isMoveable: isMoveable(
+            newCardIndex,
+            newCardSlots,
+            state.rowSize,
+            state.colSize
+          ),
+        };
+        updateAdjacentMoveable(
+          newCardSlots,
+          newCardIndex,
+          state.rowSize,
+          state.colSize
+        );
+
         if (state.newCardValues.length > 1) {
           newCardValues = newCardValues.slice(1);
         } else {

@@ -56,6 +56,24 @@ export const getUpIndex = (
     ? getIndex((row - 1 + rowSize) % rowSize, col, colSize)
     : null;
 };
+export type Direction = 'left' | 'right' | 'up' | 'down';
+export const getAdjacentIndex = (
+  direction: Direction,
+  ...args: [index: number, rowSize: number, colSize: number, circular: boolean]
+) => {
+  switch (direction) {
+    case 'left':
+      return getLeftIndex(...args);
+    case 'right':
+      return getRightIndex(...args);
+    case 'up':
+      return getUpIndex(...args);
+    case 'down':
+      return getDownIndex(...args);
+    default:
+      break;
+  }
+};
 
 export const getLeftMostIndex = (row: number, colSize: number) =>
   getIndex(row, 0, colSize);
