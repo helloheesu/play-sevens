@@ -144,12 +144,14 @@ const Card = ({
         <p className="score">+{score}</p>
       )}
       <p className="value">{value}</p>
-      <Arrows>
-        <div className="left">{left && 'L'}</div>
-        <div className="right">{right && 'R'}</div>
-        <div className="up">{up && 'U'}</div>
-        <div className="down">{down && 'D'}</div>
-      </Arrows>
+      {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && (
+        <Arrows>
+          <div className="left">{left && 'L'}</div>
+          <div className="right">{right && 'R'}</div>
+          <div className="up">{up && 'U'}</div>
+          <div className="down">{down && 'D'}</div>
+        </Arrows>
+      )}
     </Container>
   );
 };

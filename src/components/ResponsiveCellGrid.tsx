@@ -72,7 +72,7 @@ const ResponsiveCellGrid = ({
       >
         {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => (
           <Cell key={i} width={cellWidth} height={cellHeight}>
-            {i}
+            {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
           </Cell>
         ))}
       </Grid>
