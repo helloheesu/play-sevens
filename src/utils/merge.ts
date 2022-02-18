@@ -117,61 +117,6 @@ export const isMoveable = (
   };
 };
 
-export const updateAdjacentMoveable = (
-  cardSlots: CardSlot[],
-  index: number,
-  rowSize: number,
-  colSize: number
-) => {
-  const leftIndex = getLeftIndex(index, rowSize, colSize);
-  const leftCard = leftIndex && cardSlots[leftIndex];
-  if (leftCard) {
-    leftCard.isMoveable.right = isMoveableToDirection(
-      'right',
-      index,
-      cardSlots,
-      rowSize,
-      colSize
-    );
-  }
-
-  const rightIndex = getRightIndex(index, rowSize, colSize);
-  const rightCard = rightIndex && cardSlots[rightIndex];
-  if (rightCard) {
-    rightCard.isMoveable.left = isMoveableToDirection(
-      'left',
-      index,
-      cardSlots,
-      rowSize,
-      colSize
-    );
-  }
-
-  const upIndex = getUpIndex(index, rowSize, colSize);
-  const upCard = upIndex && cardSlots[upIndex];
-  if (upCard) {
-    upCard.isMoveable.down = isMoveableToDirection(
-      'down',
-      index,
-      cardSlots,
-      rowSize,
-      colSize
-    );
-  }
-
-  const downIndex = getDownIndex(index, rowSize, colSize);
-  const downCard = downIndex && cardSlots[downIndex];
-  if (downCard) {
-    downCard.isMoveable.up = isMoveableToDirection(
-      'up',
-      index,
-      cardSlots,
-      rowSize,
-      colSize
-    );
-  }
-};
-
 const isMergeable = (cardA: CardSlot, cardB: CardSlot): boolean => {
   if (!cardA || !cardB) {
     return true;
