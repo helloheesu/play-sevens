@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { IsMoveable } from '../reducer';
 import { ColorKey } from '../theme';
+import { Direction } from '../utils/gridToLine';
 
 const getColors = (
   value: number
@@ -85,17 +86,59 @@ interface Props {
   width: number;
   height: number;
   isMoveable?: IsMoveable;
+  isMoving?: boolean;
+  direction?: Direction;
+  deltaX?: number;
+  deltaY?: number;
 }
-const Card = ({ value, score, width, height, isMoveable }: Props) => {
+const Card = ({
+  value,
+  score,
+  width,
+  height,
+  isMoveable,
+  isMoving,
+  direction,
+  deltaX,
+  deltaY,
+}: Props) => {
   const { left, right, up, down } = isMoveable || {};
 
   const { colorName, fontColor } = getColors(value);
+
+  let movingStyle: React.CSSProperties = {
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  };
+  if (isMoving && isMoveable && isMoveable[direction!]) {
+    movingStyle.zIndex = 2;
+    switch (direction) {
+      case 'left':
+        movingStyle.left = `-${Math.min(deltaX!, width)}px`;
+        break;
+      case 'right':
+        movingStyle.left = `${Math.min(deltaX!, width)}px`;
+        break;
+      case 'up':
+        movingStyle.top = `-${Math.min(deltaY!, height)}px`;
+        break;
+      case 'down':
+        movingStyle.top = `${Math.min(deltaY!, height)}px`;
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <Container
       colorName={colorName}
       fontColor={fontColor}
       width={width}
       height={height}
+      style={movingStyle}
     >
       {typeof score === 'number' && score > 0 && (
         <p className="score">+{score}</p>

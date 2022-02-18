@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { getGridIndexFromLineIndex } from '../utils/gridToLine';
+import { Direction, getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
 import useResponsiveCell from '../hooks/useResponsiveCell';
 import { calculateScore } from '../utils/value';
@@ -35,8 +35,20 @@ interface Props {
   state: State;
   dispatch: (value: Action) => void;
   gridContainerRef: React.RefObject<HTMLDivElement>;
+  isMoving: boolean;
+  direction?: Direction;
+  deltaX: number;
+  deltaY: number;
 }
-const ResponsiveCellGrid = ({ state, dispatch, gridContainerRef }: Props) => {
+const ResponsiveCellGrid = ({
+  state,
+  dispatch,
+  gridContainerRef,
+  isMoving,
+  direction,
+  deltaX,
+  deltaY,
+}: Props) => {
   const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
     gridContainerRef,
     state.rowSize,
@@ -92,6 +104,10 @@ const ResponsiveCellGrid = ({ state, dispatch, gridContainerRef }: Props) => {
                   width={cellWidth}
                   height={cellHeight}
                   isMoveable={card.isMoveable}
+                  isMoving={isMoving}
+                  direction={direction}
+                  deltaX={deltaX}
+                  deltaY={deltaY}
                 />
               </Cell>
             )

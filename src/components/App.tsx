@@ -93,11 +93,42 @@ function App() {
     dispatch({ type: 'merge', direction: direction });
     logAnalytics(`move ${direction}`);
   };
-  const onSwiped: SwipeCallback = ({ dir }) => {
-    onMove(dir.toLowerCase() as Direction);
-  };
 
+  const [isMoving, setIsMoving] = useState(false);
+  const [direction, setDirection] = useState<Direction>();
+  const [deltaX, setDeltaX] = useState<number>(0);
+  const [deltaY, setDeltaY] = useState<number>(0);
+  const onSwiping: SwipeCallback = ({ dir, deltaX, deltaY, first }) => {
+    if (first) {
+      setIsMoving(true);
+      setDirection(dir.toLowerCase() as Direction);
+    }
+    switch (direction) {
+      case 'left':
+        setDeltaX(deltaX >= 0 ? 0 : -deltaX);
+        break;
+      case 'right':
+        setDeltaX(deltaX > 0 ? deltaX : 0);
+        break;
+      case 'up':
+        setDeltaY(deltaY >= 0 ? 0 : -deltaY);
+        break;
+      case 'down':
+        setDeltaY(deltaY > 0 ? deltaY : 0);
+        break;
+      default:
+        break;
+    }
+  };
+  const SWIPE_THROTTLE = 10;
+  const onSwiped: SwipeCallback = ({ dir }) => {
+    if (!isMoving || deltaX > SWIPE_THROTTLE || deltaY > SWIPE_THROTTLE) {
+      onMove(dir.toLowerCase() as Direction);
+    }
+    setIsMoving(false);
+  };
   const handlers = useSwipeable({
+    onSwiping: onSwiping,
     onSwiped: onSwiped,
   });
 
@@ -209,6 +240,10 @@ function App() {
               state={state}
               dispatch={dispatch}
               gridContainerRef={gridContainerRef}
+              isMoving={isMoving}
+              direction={direction}
+              deltaX={deltaX}
+              deltaY={deltaY}
             />
           </GridContainer>
         </ContentWrapper>
