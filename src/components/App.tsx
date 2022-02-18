@@ -122,7 +122,7 @@ function App() {
   };
   const SWIPE_THROTTLE = 10;
   const onSwiped: SwipeCallback = ({ dir }) => {
-    if (!isMoving || deltaX > SWIPE_THROTTLE || deltaY > SWIPE_THROTTLE) {
+    if (deltaX > SWIPE_THROTTLE || deltaY > SWIPE_THROTTLE) {
       onMove(dir.toLowerCase() as Direction);
     }
     setIsMoving(false);
