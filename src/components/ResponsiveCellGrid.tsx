@@ -104,6 +104,7 @@ const ResponsiveCellGrid = ({
                   }
                   width={cellWidth}
                   height={cellHeight}
+                  gap={cellGap}
                   isMoveable={card.isMoveable}
                   isMoving={isMoving}
                   direction={direction}

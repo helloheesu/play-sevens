@@ -91,12 +91,14 @@ interface Props {
   deltaX?: number;
   deltaY?: number;
   isAnimating?: boolean;
+  gap?: number;
 }
 const Card = ({
   value,
   score,
   width,
   height,
+  gap,
   isMoveable,
   isMoving,
   direction,
@@ -117,19 +119,18 @@ const Card = ({
   if (isMoveable && isMoveable[direction!]) {
     if (isAnimating) {
       movingStyle.zIndex = 2;
-      movingStyle.transition = 'left 0.3s top 0.3s';
       switch (direction) {
         case 'left':
-          movingStyle.left = `-${width}px`;
+          movingStyle.left = `-${width + (gap ? gap - 5 : 0)}px`;
           break;
         case 'right':
-          movingStyle.left = `${width}px`;
+          movingStyle.left = `${width + (gap ? gap - 5 : 0)}px`;
           break;
         case 'up':
-          movingStyle.top = `-${height}px`;
+          movingStyle.top = `-${height + (gap ? gap - 5 : 0)}px`;
           break;
         case 'down':
-          movingStyle.top = `${height}px`;
+          movingStyle.top = `${height + (gap ? gap - 5 : 0)}px`;
           break;
         default:
           break;
@@ -138,16 +139,28 @@ const Card = ({
       movingStyle.zIndex = 2;
       switch (direction) {
         case 'left':
-          movingStyle.left = `-${Math.min(deltaX!, width)}px`;
+          movingStyle.left = `-${Math.min(
+            deltaX!,
+            width + (gap ? gap - 5 : 0)
+          )}px`;
           break;
         case 'right':
-          movingStyle.left = `${Math.min(deltaX!, width)}px`;
+          movingStyle.left = `${Math.min(
+            deltaX!,
+            width + (gap ? gap - 5 : 0)
+          )}px`;
           break;
         case 'up':
-          movingStyle.top = `-${Math.min(deltaY!, height)}px`;
+          movingStyle.top = `-${Math.min(
+            deltaY!,
+            height + (gap ? gap - 5 : 0)
+          )}px`;
           break;
         case 'down':
-          movingStyle.top = `${Math.min(deltaY!, height)}px`;
+          movingStyle.top = `${Math.min(
+            deltaY!,
+            height + (gap ? gap - 5 : 0)
+          )}px`;
           break;
         default:
           break;
