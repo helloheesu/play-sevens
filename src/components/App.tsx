@@ -120,12 +120,20 @@ function App() {
         break;
     }
   };
-  const SWIPE_THROTTLE = 10;
+  const [isAnimating, setIsAnimating] = useState(false);
+  const SWIPE_THROTTLE = 30;
   const onSwiped: SwipeCallback = ({ dir }) => {
-    if (deltaX > SWIPE_THROTTLE || deltaY > SWIPE_THROTTLE) {
-      onMove(dir.toLowerCase() as Direction);
+    if (deltaX < SWIPE_THROTTLE && deltaY < SWIPE_THROTTLE) {
+      setIsMoving(false);
+      return;
+    } else {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsAnimating(false);
+        setIsMoving(false);
+        onMove(dir.toLowerCase() as Direction);
+      }, 300);
     }
-    setIsMoving(false);
   };
   const handlers = useSwipeable({
     onSwiping: onSwiping,
@@ -244,6 +252,7 @@ function App() {
               direction={direction}
               deltaX={deltaX}
               deltaY={deltaY}
+              isAnimating={isAnimating}
             />
           </GridContainer>
         </ContentWrapper>

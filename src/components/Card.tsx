@@ -90,6 +90,7 @@ interface Props {
   direction?: Direction;
   deltaX?: number;
   deltaY?: number;
+  isAnimating?: boolean;
 }
 const Card = ({
   value,
@@ -101,6 +102,7 @@ const Card = ({
   direction,
   deltaX,
   deltaY,
+  isAnimating,
 }: Props) => {
   const { left, right, up, down } = isMoveable || {};
 
@@ -112,23 +114,44 @@ const Card = ({
     top: 0,
     bottom: 0,
   };
-  if (isMoving && isMoveable && isMoveable[direction!]) {
-    movingStyle.zIndex = 2;
-    switch (direction) {
-      case 'left':
-        movingStyle.left = `-${Math.min(deltaX!, width)}px`;
-        break;
-      case 'right':
-        movingStyle.left = `${Math.min(deltaX!, width)}px`;
-        break;
-      case 'up':
-        movingStyle.top = `-${Math.min(deltaY!, height)}px`;
-        break;
-      case 'down':
-        movingStyle.top = `${Math.min(deltaY!, height)}px`;
-        break;
-      default:
-        break;
+  if (isMoveable && isMoveable[direction!]) {
+    if (isAnimating) {
+      movingStyle.zIndex = 2;
+      movingStyle.transition = 'left 0.3s top 0.3s';
+      switch (direction) {
+        case 'left':
+          movingStyle.left = `-${width}px`;
+          break;
+        case 'right':
+          movingStyle.left = `${width}px`;
+          break;
+        case 'up':
+          movingStyle.top = `-${height}px`;
+          break;
+        case 'down':
+          movingStyle.top = `${height}px`;
+          break;
+        default:
+          break;
+      }
+    } else if (isMoving) {
+      movingStyle.zIndex = 2;
+      switch (direction) {
+        case 'left':
+          movingStyle.left = `-${Math.min(deltaX!, width)}px`;
+          break;
+        case 'right':
+          movingStyle.left = `${Math.min(deltaX!, width)}px`;
+          break;
+        case 'up':
+          movingStyle.top = `-${Math.min(deltaY!, height)}px`;
+          break;
+        case 'down':
+          movingStyle.top = `${Math.min(deltaY!, height)}px`;
+          break;
+        default:
+          break;
+      }
     }
   }
 
