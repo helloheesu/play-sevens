@@ -39,6 +39,7 @@ interface Props {
   direction?: Direction;
   deltaX: number;
   deltaY: number;
+  isAnimating: boolean;
 }
 const ResponsiveCellGrid = ({
   state,
@@ -48,6 +49,7 @@ const ResponsiveCellGrid = ({
   direction,
   deltaX,
   deltaY,
+  isAnimating,
 }: Props) => {
   const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
     gridContainerRef,
@@ -108,6 +110,7 @@ const ResponsiveCellGrid = ({
                   direction={direction}
                   deltaX={deltaX}
                   deltaY={deltaY}
+                  isAnimating={isAnimating}
                 />
               </Cell>
             )
