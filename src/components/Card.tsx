@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { IsMoveable } from '../reducer';
 import { ColorKey } from '../theme';
 
 const getColors = (
@@ -51,14 +52,43 @@ const Container = styled.div<ContainerProps>`
     color: ${(props) => props.theme[props.fontColor].main};
   }
 `;
+const Arrows = styled.div`
+  font-size: 0.5em;
+
+  height: 100%;
+  width: 100%;
+  display: grid;
+  align-content: space-between;
+  justify-content: space-between;
+  position: absolute;
+  grid-template-areas:
+    '. up .'
+    'left . right'
+    '. down .';
+  .left {
+    grid-area: left;
+  }
+  .right {
+    grid-area: right;
+  }
+  .up {
+    grid-area: up;
+  }
+  .down {
+    grid-area: down;
+  }
+`;
 
 interface Props {
   value: number;
   score?: number;
   width: number;
   height: number;
+  isMoveable?: IsMoveable;
 }
-const Card = ({ value, score, width, height }: Props) => {
+const Card = ({ value, score, width, height, isMoveable }: Props) => {
+  const { left, right, up, down } = isMoveable || {};
+
   const { colorName, fontColor } = getColors(value);
   return (
     <Container
@@ -71,6 +101,12 @@ const Card = ({ value, score, width, height }: Props) => {
         <p className="score">+{score}</p>
       )}
       <p className="value">{value}</p>
+      <Arrows>
+        <div className="left">{left && 'L'}</div>
+        <div className="right">{right && 'R'}</div>
+        <div className="up">{up && 'U'}</div>
+        <div className="down">{down && 'D'}</div>
+      </Arrows>
     </Container>
   );
 };

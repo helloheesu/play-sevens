@@ -86,6 +86,7 @@ const ResponsiveGrid = ({ state, dispatch, gridContainerRef }: Props) => {
                   }
                   width={cellWidth}
                   height={cellHeight}
+                  isMoveable={card.isMoveable}
                 />
               </Cell>
             )

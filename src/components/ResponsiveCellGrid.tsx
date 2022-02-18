@@ -59,7 +59,9 @@ const ResponsiveCellGrid = ({ state, dispatch, gridContainerRef }: Props) => {
         style={{ position: 'absolute' }}
       >
         {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => (
-          <Cell key={i} width={cellWidth} height={cellHeight} />
+          <Cell key={i} width={cellWidth} height={cellHeight}>
+            {i}
+          </Cell>
         ))}
       </Grid>
       <Grid
@@ -89,6 +91,7 @@ const ResponsiveCellGrid = ({ state, dispatch, gridContainerRef }: Props) => {
                   }
                   width={cellWidth}
                   height={cellHeight}
+                  isMoveable={card.isMoveable}
                 />
               </Cell>
             )
