@@ -25,7 +25,7 @@ const Grid = styled.div<{
   align-items: center;
   justify-items: center;
 `;
-const Cell = styled.div<{ width: number; height: number }>`
+const EmptyCell = styled.div<{ width: number; height: number }>`
   background-color: ${(props) => props.theme.background.darken};
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
@@ -72,9 +72,9 @@ const ResponsiveCellGrid = ({
         style={{ position: 'absolute' }}
       >
         {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => (
-          <Cell key={i} width={cellWidth} height={cellHeight - 5}>
+          <EmptyCell key={i} width={cellWidth} height={cellHeight - 5}>
             {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
-          </Cell>
+          </EmptyCell>
         ))}
       </Grid>
       <Grid
@@ -88,32 +88,27 @@ const ResponsiveCellGrid = ({
           const { row, col } = getGridIndexFromLineIndex(index, state.colSize);
           return (
             card && (
-              <Cell
+              <Card
                 key={card.id}
-                width={cellWidth}
-                height={cellHeight}
                 style={{
                   gridRow: `${row + 1}/${row + 2}`,
                   gridColumn: `${col + 1}/${col + 2}`,
                   marginTop: `-5px`,
                 }}
-              >
-                <Card
-                  value={card.value}
-                  score={
-                    !state.isGameEnded ? undefined : calculateScore(card.value)
-                  }
-                  width={cellWidth}
-                  height={cellHeight}
-                  gap={cellGap}
-                  isMoveable={card.isMoveable}
-                  isMoving={isMoving}
-                  direction={direction}
-                  deltaX={deltaX}
-                  deltaY={deltaY}
-                  isAnimating={isAnimating}
-                />
-              </Cell>
+                value={card.value}
+                score={
+                  !state.isGameEnded ? undefined : calculateScore(card.value)
+                }
+                width={cellWidth}
+                height={cellHeight}
+                gap={cellGap}
+                isMoveable={card.isMoveable}
+                isMoving={isMoving}
+                direction={direction}
+                deltaX={deltaX}
+                deltaY={deltaY}
+                isAnimating={isAnimating}
+              />
             )
           );
         })}
