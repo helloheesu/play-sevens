@@ -10,8 +10,9 @@ import { SwipeCallback, useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
 import ResponsiveCellGrid from './ResponsiveCellGrid';
-import { Direction } from '../utils/gridToLine';
+import { Direction, getGridIndexFromLineIndex } from '../utils/gridToLine';
 import Menu from './Menu';
+import Card from './Card';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -191,15 +192,41 @@ function App() {
         )}
         <ContentWrapper {...handlers} className="touchaction">
           <Menu newCardValue={state.newCardValues[0]} onReset={handleReset} />
-          <ResponsiveCellGrid
-            state={state}
-            dispatch={dispatch}
-            isMoving={isMoving}
-            direction={direction}
-            deltaX={deltaX}
-            deltaY={deltaY}
-            isAnimating={isAnimating}
-          />
+          <ResponsiveCellGrid state={state} dispatch={dispatch}>
+            {state.cardSlots.map((card, index) => {
+              const { row, col } = getGridIndexFromLineIndex(
+                index,
+                state.colSize
+              );
+              return (
+                card && (
+                  <Card
+                    key={card.id}
+                    style={{
+                      gridRow: `${row + 1}/${row + 2}`,
+                      gridColumn: `${col + 1}/${col + 2}`,
+                      marginTop: `-5px`,
+                    }}
+                    value={card.value}
+                    score={
+                      !state.isGameEnded
+                        ? undefined
+                        : calculateScore(card.value)
+                    }
+                    width={30} // [TODO] temp value
+                    height={40} // [TODO] temp value
+                    gap={10} // [TODO] temp value
+                    isMoveable={card.isMoveable}
+                    isMoving={isMoving}
+                    direction={direction}
+                    deltaX={deltaX}
+                    deltaY={deltaY}
+                    isAnimating={isAnimating}
+                  />
+                )
+              );
+            })}
+          </ResponsiveCellGrid>
         </ContentWrapper>
       </Wrapper>
     </ThemeProvider>

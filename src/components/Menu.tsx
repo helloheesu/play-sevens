@@ -37,11 +37,18 @@ const Menu = ({ newCardValue, onReset }: Props) => {
         <FontAwesomeIcon icon={faList} />
       </UIButton>
       <NextValueDisplay>
-        <Card
-          value={newCardValue}
-          width={DEFAULT_SCALE_UNIT * WIDTH_RATIO}
-          height={DEFAULT_SCALE_UNIT * HEIGHT_RATIO}
-        />
+        <div
+          style={{
+            width: `${DEFAULT_SCALE_UNIT * WIDTH_RATIO}px`,
+            height: `${DEFAULT_SCALE_UNIT * HEIGHT_RATIO}px`,
+          }}
+        >
+          <Card
+            value={newCardValue}
+            width={DEFAULT_SCALE_UNIT * WIDTH_RATIO}
+            height={DEFAULT_SCALE_UNIT * HEIGHT_RATIO}
+          />
+        </div>
       </NextValueDisplay>
       <UIButton onClick={onReset}>
         <FontAwesomeIcon icon={faRedoAlt} style={{ transform: 'scaleX(-1)' }} />
