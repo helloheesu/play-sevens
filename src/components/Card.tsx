@@ -92,6 +92,7 @@ interface Props {
   deltaY?: number;
   isAnimating?: boolean;
   gap?: number;
+  style?: React.CSSProperties;
 }
 const Card = ({
   value,
@@ -105,6 +106,7 @@ const Card = ({
   deltaX,
   deltaY,
   isAnimating,
+  style,
 }: Props) => {
   const { left, right, up, down } = isMoveable || {};
 
@@ -174,7 +176,7 @@ const Card = ({
       fontColor={fontColor}
       width={width}
       height={height}
-      style={movingStyle}
+      style={{ ...style, ...movingStyle }}
     >
       {typeof score === 'number' && score > 0 && (
         <p className="score">+{score}</p>
