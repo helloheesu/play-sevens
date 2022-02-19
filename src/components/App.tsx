@@ -138,6 +138,7 @@ function App() {
   const handlers = useSwipeable({
     onSwiping: onSwiping,
     onSwiped: onSwiped,
+    trackMouse: true,
   });
 
   useEffect(() => {
