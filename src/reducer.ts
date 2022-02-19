@@ -24,7 +24,7 @@ import { getInitialCardValues } from './utils/newCardValue';
 import {
   DEFAULT_ROW_SIZE,
   DEFAULT_COL_SIZE,
-  DEFAULT_UNIT_SIZE,
+  DEFAULT_SCALE_UNIT,
   WIDTH_RATIO,
   HEIGHT_RATIO,
 } from './utils/sizeConsts';
@@ -72,9 +72,9 @@ export const getInitialState = (): State => ({
   initialCardCount: 1,
   newCardValues: getInitialCardValues(),
   isGameEnded: false,
-  cellGap: DEFAULT_UNIT_SIZE,
-  cellWidth: DEFAULT_UNIT_SIZE * WIDTH_RATIO,
-  cellHeight: DEFAULT_UNIT_SIZE * HEIGHT_RATIO,
+  cellGap: DEFAULT_SCALE_UNIT,
+  cellWidth: DEFAULT_SCALE_UNIT * WIDTH_RATIO,
+  cellHeight: DEFAULT_SCALE_UNIT * HEIGHT_RATIO,
 });
 
 const reducer: Reducer<State, Action> = (state, action) => {

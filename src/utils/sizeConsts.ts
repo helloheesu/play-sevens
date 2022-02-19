@@ -7,4 +7,3 @@ export const GAP_RATIO = 1;
 
 export const DEFAULT_ROW_SIZE = 4;
 export const DEFAULT_COL_SIZE = 4;
-export const DEFAULT_UNIT_SIZE = 16;
