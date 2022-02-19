@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Direction, getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
 import useResponsiveCell from '../hooks/useResponsiveCell';
-import { calculateScore } from '../utils/value';
-import Card from './Card';
 
 const Grid = styled.div<{
   row: number;
@@ -24,6 +22,7 @@ const Grid = styled.div<{
   height: 100%;
   align-items: center;
   justify-items: center;
+  justify-content: space-around;
 `;
 const EmptyCell = styled.div<{ width: number; height: number }>`
   background-color: ${(props) => props.theme.background.darken};
@@ -34,21 +33,9 @@ const EmptyCell = styled.div<{ width: number; height: number }>`
 interface Props {
   state: State;
   dispatch: (value: Action) => void;
-  isMoving: boolean;
-  direction?: Direction;
-  deltaX: number;
-  deltaY: number;
-  isAnimating: boolean;
+  children: React.ReactNode;
 }
-const ResponsiveCellGrid = ({
-  state,
-  dispatch,
-  isMoving,
-  direction,
-  deltaX,
-  deltaY,
-  isAnimating,
-}: Props) => {
+const ResponsiveCellGrid = ({ state, dispatch, children }: Props) => {
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
     gridContainerRef,
@@ -85,34 +72,7 @@ const ResponsiveCellGrid = ({
           </EmptyCell>
         );
       })}
-      {state.cardSlots.map((card, index) => {
-        const { row, col } = getGridIndexFromLineIndex(index, state.colSize);
-        return (
-          card && (
-            <Card
-              key={card.id}
-              style={{
-                gridRow: `${row + 1}/${row + 2}`,
-                gridColumn: `${col + 1}/${col + 2}`,
-                marginTop: `-5px`,
-              }}
-              value={card.value}
-              score={
-                !state.isGameEnded ? undefined : calculateScore(card.value)
-              }
-              width={cellWidth}
-              height={cellHeight}
-              gap={cellGap}
-              isMoveable={card.isMoveable}
-              isMoving={isMoving}
-              direction={direction}
-              deltaX={deltaX}
-              deltaY={deltaY}
-              isAnimating={isAnimating}
-            />
-          )
-        );
-      })}
+      {children}
     </Grid>
   );
 };

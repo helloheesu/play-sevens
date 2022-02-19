@@ -23,8 +23,8 @@ interface ContainerProps {
   height: number;
 }
 const Container = styled.div<ContainerProps>`
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
