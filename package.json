@@ -1,7 +1,8 @@
 {
   "name": "threes-clone",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "homepage": "http://helloheesu.github.io/threes-clone",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
@@ -25,7 +26,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "stage": "firebase hosting:channel:deploy preview"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -46,6 +48,7 @@
     ]
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.19"
+    "@types/styled-components": "^5.1.19",
+    "gh-pages": "^3.2.3"
   }
 }
