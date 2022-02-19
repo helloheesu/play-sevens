@@ -1,8 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
-import useResponsiveCell from '../hooks/useResponsiveCell';
+import useContainerSize from 'hooks/useContainerSize';
+import {
+  GAP_RATIO,
+  WIDTH_RATIO,
+  HEIGHT_RATIO,
+  DEFAULT_SCALE_UNIT,
+} from 'utils/sizeConsts';
 
 const Grid = styled.div<{
   row: number;
@@ -27,6 +33,19 @@ const EmptyCell = styled.div<{ width: number; height: number }>`
   height: ${(props) => props.height}px;
 `;
 
+const calculateScale = (
+  containerWidth: number,
+  containerHeight: number,
+  rowSize: number,
+  colSize: number
+) => {
+  const widthScale = containerWidth / ((GAP_RATIO + WIDTH_RATIO) * colSize);
+  const heightScale = containerHeight / ((GAP_RATIO + HEIGHT_RATIO) * rowSize);
+  console.log(containerWidth, containerHeight, widthScale, heightScale);
+
+  return Math.min(widthScale, heightScale);
+};
+
 interface Props {
   state: State;
   dispatch: (value: Action) => void;
@@ -34,18 +53,29 @@ interface Props {
 }
 const ResponsiveCellGrid = ({ state, dispatch, children }: Props) => {
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
-    gridContainerRef,
-    state.rowSize,
-    state.colSize
-  );
+  const { width, height } = useContainerSize(gridContainerRef);
+  const [{ cellWidth, cellHeight }, setCellSize] = useState({
+    cellWidth: DEFAULT_SCALE_UNIT * WIDTH_RATIO,
+    cellHeight: DEFAULT_SCALE_UNIT * HEIGHT_RATIO,
+  });
 
   useEffect(() => {
-    dispatch({ type: 'changeSize', cellWidth, cellHeight, cellGap });
-  }, [cellGap, cellHeight, cellWidth, dispatch]);
+    const scaleUnit = calculateScale(
+      width,
+      height,
+      state.rowSize,
+      state.colSize
+    );
+    const cellWidth = scaleUnit * WIDTH_RATIO;
+    const cellHeight = scaleUnit * HEIGHT_RATIO;
+
+    setCellSize({ cellWidth, cellHeight });
+    dispatch({ type: 'changeSize', cellWidth, cellHeight });
+  }, [width, height, state.colSize, state.rowSize, dispatch]);
 
   return (
     <Grid
+      ref={gridContainerRef}
       row={state.rowSize}
       col={state.colSize}
       width={cellWidth}
