@@ -69,21 +69,23 @@ const ResponsiveCellGrid = ({
         width={cellWidth}
         height={cellHeight}
         gap={cellGap}
-        style={{ position: 'absolute' }}
       >
-        {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => (
-          <EmptyCell key={i} width={cellWidth} height={cellHeight - 5}>
-            {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
-          </EmptyCell>
-        ))}
-      </Grid>
-      <Grid
-        row={state.rowSize}
-        col={state.colSize}
-        width={cellWidth}
-        height={cellHeight}
-        gap={cellGap}
-      >
+        {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => {
+          const { row, col } = getGridIndexFromLineIndex(i, state.colSize);
+          return (
+            <EmptyCell
+              key={i}
+              width={cellWidth}
+              height={cellHeight - 5}
+              style={{
+                gridRow: `${row + 1}/${row + 2}`,
+                gridColumn: `${col + 1}/${col + 2}`,
+              }}
+            >
+              {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
+            </EmptyCell>
+          );
+        })}
         {state.cardSlots.map((card, index) => {
           const { row, col } = getGridIndexFromLineIndex(index, state.colSize);
           return (
