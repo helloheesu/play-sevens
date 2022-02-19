@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Modal from './Modal';
 import reducer, { getInitialState } from '../reducer';
@@ -35,20 +35,11 @@ const ContentWrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const GridContainer = styled.div`
-  position: relative;
-  width: 100%;
-  flex-grow: 1;
-  overflow: hidden;
-`;
-
 function App() {
   const { height } = useWindowSize();
 
   const [state, dispatch] = useReducer(reducer, getInitialState());
   const [score, setScore] = useState<number | null>(null);
-
-  const gridContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     dispatch({ type: 'restartGame' });
@@ -200,18 +191,15 @@ function App() {
         )}
         <ContentWrapper {...handlers} className="touchaction">
           <Menu newCardValue={state.newCardValues[0]} onReset={handleReset} />
-          <GridContainer ref={gridContainerRef}>
-            <ResponsiveCellGrid
-              state={state}
-              dispatch={dispatch}
-              gridContainerRef={gridContainerRef}
-              isMoving={isMoving}
-              direction={direction}
-              deltaX={deltaX}
-              deltaY={deltaY}
-              isAnimating={isAnimating}
-            />
-          </GridContainer>
+          <ResponsiveCellGrid
+            state={state}
+            dispatch={dispatch}
+            isMoving={isMoving}
+            direction={direction}
+            deltaX={deltaX}
+            deltaY={deltaY}
+            isAnimating={isAnimating}
+          />
         </ContentWrapper>
       </Wrapper>
     </ThemeProvider>
