@@ -1,24 +1,17 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import Card from './Card';
 import Modal from './Modal';
 import reducer, { getInitialState } from '../reducer';
 import defaultTheme from '../theme';
 import ScoreNameForm from './ScoreNameForm';
 import ScoreBoard from './ScoreBoard';
 import { logAnalytics, ScoreInfo } from '../fbase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { SwipeCallback, useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
 import ResponsiveCellGrid from './ResponsiveCellGrid';
-import {
-  DEFAULT_SCALE_UNIT,
-  HEIGHT_RATIO,
-  WIDTH_RATIO,
-} from '../utils/sizeConsts';
 import { Direction } from '../utils/gridToLine';
+import Menu from './Menu';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -40,24 +33,6 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
-`;
-
-const UIContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin-bottom: 0.4rem;
-`;
-const UIButton = styled.button`
-  border: none;
-  border-radius: 0.3rem;
-  padding: 0.5em 1em;
-  background-color: ${(props) => props.theme.background.darken};
-  color: ${(props) => props.theme.white.main};
-  box-shadow: 0 0.1rem 0 0 ${(props) => props.theme.black.main};
-`;
-const NextValueDisplay = styled.div`
-  transform: scale(0.7);
 `;
 
 const GridContainer = styled.div`
@@ -224,26 +199,8 @@ function App() {
             />
           </Modal>
         )}
-
         <ContentWrapper {...handlers} className="touchaction">
-          <UIContainer>
-            <UIButton onClick={() => alert('메뉴는 아직 만드는 중이예요 :p')}>
-              <FontAwesomeIcon icon={faList} />
-            </UIButton>
-            <NextValueDisplay>
-              <Card
-                value={state.newCardValues[0]}
-                width={DEFAULT_SCALE_UNIT * WIDTH_RATIO}
-                height={DEFAULT_SCALE_UNIT * HEIGHT_RATIO}
-              />
-            </NextValueDisplay>
-            <UIButton onClick={handleReset}>
-              <FontAwesomeIcon
-                icon={faRedoAlt}
-                style={{ transform: 'scaleX(-1)' }}
-              />
-            </UIButton>
-          </UIContainer>
+          <Menu newCardValue={state.newCardValues[0]} onReset={handleReset} />
           <GridContainer ref={gridContainerRef}>
             <ResponsiveCellGrid
               state={state}
