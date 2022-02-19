@@ -45,7 +45,6 @@ export interface State {
   isGameEnded: boolean;
   cellWidth: number;
   cellHeight: number;
-  cellGap: number;
 }
 
 export type Action =
@@ -58,7 +57,6 @@ export type Action =
       colSize?: number;
       cellWidth?: number;
       cellHeight?: number;
-      cellGap?: number;
     }
   | { type: 'merge'; direction: Direction };
 
@@ -72,7 +70,6 @@ export const getInitialState = (): State => ({
   initialCardCount: 1,
   newCardValues: getInitialCardValues(),
   isGameEnded: false,
-  cellGap: DEFAULT_SCALE_UNIT,
   cellWidth: DEFAULT_SCALE_UNIT * WIDTH_RATIO,
   cellHeight: DEFAULT_SCALE_UNIT * HEIGHT_RATIO,
 });
