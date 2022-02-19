@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Direction, getGridIndexFromLineIndex } from '../utils/gridToLine';
 import { Action, State } from '../reducer';
@@ -34,7 +34,6 @@ const EmptyCell = styled.div<{ width: number; height: number }>`
 interface Props {
   state: State;
   dispatch: (value: Action) => void;
-  gridContainerRef: React.RefObject<HTMLDivElement>;
   isMoving: boolean;
   direction?: Direction;
   deltaX: number;
@@ -44,13 +43,13 @@ interface Props {
 const ResponsiveCellGrid = ({
   state,
   dispatch,
-  gridContainerRef,
   isMoving,
   direction,
   deltaX,
   deltaY,
   isAnimating,
 }: Props) => {
+  const gridContainerRef = useRef<HTMLDivElement>(null);
   const { cellWidth, cellHeight, cellGap } = useResponsiveCell(
     gridContainerRef,
     state.rowSize,
@@ -62,60 +61,59 @@ const ResponsiveCellGrid = ({
   }, [cellGap, cellHeight, cellWidth, dispatch]);
 
   return (
-    <>
-      <Grid
-        row={state.rowSize}
-        col={state.colSize}
-        width={cellWidth}
-        height={cellHeight}
-        gap={cellGap}
-      >
-        {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => {
-          const { row, col } = getGridIndexFromLineIndex(i, state.colSize);
-          return (
-            <EmptyCell
-              key={i}
-              width={cellWidth}
-              height={cellHeight - 5}
+    <Grid
+      ref={gridContainerRef}
+      row={state.rowSize}
+      col={state.colSize}
+      width={cellWidth}
+      height={cellHeight}
+      gap={cellGap}
+    >
+      {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => {
+        const { row, col } = getGridIndexFromLineIndex(i, state.colSize);
+        return (
+          <EmptyCell
+            key={i}
+            width={cellWidth}
+            height={cellHeight - 5}
+            style={{
+              gridRow: `${row + 1}/${row + 2}`,
+              gridColumn: `${col + 1}/${col + 2}`,
+            }}
+          >
+            {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
+          </EmptyCell>
+        );
+      })}
+      {state.cardSlots.map((card, index) => {
+        const { row, col } = getGridIndexFromLineIndex(index, state.colSize);
+        return (
+          card && (
+            <Card
+              key={card.id}
               style={{
                 gridRow: `${row + 1}/${row + 2}`,
                 gridColumn: `${col + 1}/${col + 2}`,
+                marginTop: `-5px`,
               }}
-            >
-              {process.env.REACT_APP_DEBUG_MOVEABLE === 'true' && i}
-            </EmptyCell>
-          );
-        })}
-        {state.cardSlots.map((card, index) => {
-          const { row, col } = getGridIndexFromLineIndex(index, state.colSize);
-          return (
-            card && (
-              <Card
-                key={card.id}
-                style={{
-                  gridRow: `${row + 1}/${row + 2}`,
-                  gridColumn: `${col + 1}/${col + 2}`,
-                  marginTop: `-5px`,
-                }}
-                value={card.value}
-                score={
-                  !state.isGameEnded ? undefined : calculateScore(card.value)
-                }
-                width={cellWidth}
-                height={cellHeight}
-                gap={cellGap}
-                isMoveable={card.isMoveable}
-                isMoving={isMoving}
-                direction={direction}
-                deltaX={deltaX}
-                deltaY={deltaY}
-                isAnimating={isAnimating}
-              />
-            )
-          );
-        })}
-      </Grid>
-    </>
+              value={card.value}
+              score={
+                !state.isGameEnded ? undefined : calculateScore(card.value)
+              }
+              width={cellWidth}
+              height={cellHeight}
+              gap={cellGap}
+              isMoveable={card.isMoveable}
+              isMoving={isMoving}
+              direction={direction}
+              deltaX={deltaX}
+              deltaY={deltaY}
+              isAnimating={isAnimating}
+            />
+          )
+        );
+      })}
+    </Grid>
   );
 };
 
