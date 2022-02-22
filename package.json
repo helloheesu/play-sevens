@@ -2,7 +2,6 @@
   "name": "threes-clone",
   "version": "0.1.0",
   "private": false,
-  "homepage": "http://helloheesu.github.io/threes-clone",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
