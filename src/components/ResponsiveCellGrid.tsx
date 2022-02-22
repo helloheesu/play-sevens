@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { getGridIndexFromLineIndex } from '../utils/gridToLine';
-import { Action, State } from '../reducer';
 import useContainerSize from 'hooks/useContainerSize';
 import {
   GAP_RATIO,
@@ -9,6 +8,7 @@ import {
   HEIGHT_RATIO,
   DEFAULT_SCALE_UNIT,
 } from 'utils/sizeConsts';
+import { atom, useRecoilState } from 'recoil';
 
 const Grid = styled.div<{
   row: number;
@@ -46,43 +46,44 @@ const calculateScale = (
   return Math.min(widthScale, heightScale);
 };
 
-interface Props {
-  state: State;
-  dispatch: (value: Action) => void;
-  children: React.ReactNode;
-}
-const ResponsiveCellGrid = ({ state, dispatch, children }: Props) => {
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-  const { width, height } = useContainerSize(gridContainerRef);
-  const [{ cellWidth, cellHeight }, setCellSize] = useState({
+export const cellSizeState = atom({
+  key: 'cellSize',
+  default: {
     cellWidth: DEFAULT_SCALE_UNIT * WIDTH_RATIO,
     cellHeight: DEFAULT_SCALE_UNIT * HEIGHT_RATIO,
-  });
+    cellGap: DEFAULT_SCALE_UNIT,
+  },
+});
+
+interface Props {
+  rowSize: number;
+  colSize: number;
+  children: React.ReactNode;
+}
+const ResponsiveCellGrid = ({ rowSize, colSize, children }: Props) => {
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(gridContainerRef);
+  const [{ cellWidth, cellHeight }, setCellSize] =
+    useRecoilState(cellSizeState);
 
   useEffect(() => {
-    const scaleUnit = calculateScale(
-      width,
-      height,
-      state.rowSize,
-      state.colSize
-    );
+    const scaleUnit = calculateScale(width, height, rowSize, colSize);
     const cellWidth = scaleUnit * WIDTH_RATIO;
     const cellHeight = scaleUnit * HEIGHT_RATIO;
 
-    setCellSize({ cellWidth, cellHeight });
-    dispatch({ type: 'changeSize', cellWidth, cellHeight });
-  }, [width, height, state.colSize, state.rowSize, dispatch]);
+    setCellSize({ cellWidth, cellHeight, cellGap: scaleUnit });
+  }, [height, setCellSize, colSize, rowSize, width]);
 
   return (
     <Grid
       ref={gridContainerRef}
-      row={state.rowSize}
-      col={state.colSize}
+      row={rowSize}
+      col={colSize}
       width={cellWidth}
       height={cellHeight}
     >
-      {Array.apply(null, Array(state.rowSize * state.colSize)).map((_, i) => {
-        const { row, col } = getGridIndexFromLineIndex(i, state.colSize);
+      {Array.apply(null, Array(rowSize * colSize)).map((_, i) => {
+        const { row, col } = getGridIndexFromLineIndex(i, colSize);
         return (
           <EmptyCell
             key={i}
