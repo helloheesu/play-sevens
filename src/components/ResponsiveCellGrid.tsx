@@ -41,7 +41,6 @@ const calculateScale = (
 ) => {
   const widthScale = containerWidth / ((GAP_RATIO + WIDTH_RATIO) * colSize);
   const heightScale = containerHeight / ((GAP_RATIO + HEIGHT_RATIO) * rowSize);
-  console.log(containerWidth, containerHeight, widthScale, heightScale);
 
   return Math.min(widthScale, heightScale);
 };
