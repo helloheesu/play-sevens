@@ -21,13 +21,7 @@ import {
   updateMoveable,
 } from './utils/merge';
 import { getInitialCardValues } from './utils/newCardValue';
-import {
-  DEFAULT_ROW_SIZE,
-  DEFAULT_COL_SIZE,
-  DEFAULT_SCALE_UNIT,
-  WIDTH_RATIO,
-  HEIGHT_RATIO,
-} from './utils/sizeConsts';
+import { DEFAULT_ROW_SIZE, DEFAULT_COL_SIZE } from './utils/sizeConsts';
 
 interface CardInfo {
   id: number;
@@ -43,8 +37,6 @@ export interface State {
   initialCardCount: number;
   newCardValues: number[];
   isGameEnded: boolean;
-  cellWidth: number;
-  cellHeight: number;
 }
 
 export type Action =
@@ -55,8 +47,6 @@ export type Action =
       type: 'changeSize';
       rowSize?: number;
       colSize?: number;
-      cellWidth?: number;
-      cellHeight?: number;
     }
   | { type: 'merge'; direction: Direction };
 
@@ -70,8 +60,6 @@ export const getInitialState = (): State => ({
   initialCardCount: 1,
   newCardValues: getInitialCardValues(),
   isGameEnded: false,
-  cellWidth: DEFAULT_SCALE_UNIT * WIDTH_RATIO,
-  cellHeight: DEFAULT_SCALE_UNIT * HEIGHT_RATIO,
 });
 
 const reducer: Reducer<State, Action> = (state, action) => {

@@ -9,10 +9,11 @@ import { logAnalytics, ScoreInfo } from '../fbase';
 import { SwipeCallback, useSwipeable } from 'react-swipeable';
 import useWindowSize from '../hooks/useWindowSize';
 import { calculateScore } from '../utils/value';
-import ResponsiveCellGrid from './ResponsiveCellGrid';
+import ResponsiveCellGrid, { cellSizeState } from './ResponsiveCellGrid';
 import { Direction, getGridIndexFromLineIndex } from '../utils/gridToLine';
 import Menu from './Menu';
 import Card from './Card';
+import { useRecoilValue } from 'recoil';
 
 // [NOTE] 100vh doesn't work properly on mobile
 interface WrapperProps {
@@ -170,6 +171,8 @@ function App() {
     dispatch({ type: 'restartGame' });
   };
 
+  const { cellWidth, cellHeight, cellGap } = useRecoilValue(cellSizeState);
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Wrapper windowHeight={height}>
@@ -192,7 +195,7 @@ function App() {
         )}
         <ContentWrapper {...handlers} className="touchaction">
           <Menu newCardValue={state.newCardValues[0]} onReset={handleReset} />
-          <ResponsiveCellGrid state={state} dispatch={dispatch}>
+          <ResponsiveCellGrid rowSize={state.rowSize} colSize={state.colSize}>
             {state.cardSlots.map((card, index) => {
               const { row, col } = getGridIndexFromLineIndex(
                 index,
@@ -213,9 +216,9 @@ function App() {
                         ? undefined
                         : calculateScore(card.value)
                     }
-                    width={30} // [TODO] temp value
-                    height={40} // [TODO] temp value
-                    gap={10} // [TODO] temp value
+                    width={cellWidth}
+                    height={cellHeight}
+                    gap={cellGap}
                     isMoveable={card.isMoveable}
                     isMoving={isMoving}
                     direction={direction}
